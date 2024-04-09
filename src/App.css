@@ -1,0 +1,95 @@
+:is(#app-header, #app-footer) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+  width: 100%;
+
+  background-color: rgb(55, 58, 65);
+}
+
+#app-header {
+  height: 80px;
+}
+
+#app-footer {
+  height: 120px;
+}
+
+#app-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+#game-board {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 40svw;
+  height: 30svw;
+
+  border: 2px solid var(--main-color);
+}
+
+.player {
+  height: 22%;
+  width: max(3%, 10px);
+  background-color: var(--main-color);
+}
+
+#player1 {
+  margin-left: 4%;
+}
+
+#player2 {
+  margin-right: 4%;
+}
+
+#board-middle-line {
+  height: 100%;
+  width: 6px;
+  background: linear-gradient(
+    var(--main-color) 4%,
+    var(--bg-color) 4% 8%,
+    var(--main-color) 8% 12%,
+    var(--bg-color) 12% 16%,
+    var(--main-color) 16% 20%,
+    var(--bg-color) 20% 24%,
+    var(--main-color) 24% 28%,
+    var(--bg-color) 28% 32%,
+    var(--main-color) 32% 36%,
+    var(--bg-color) 36% 40%,
+    var(--main-color) 40% 44%,
+    var(--bg-color) 44% 48%,
+    var(--main-color) 48% 52%,
+    var(--bg-color) 52% 56%,
+    var(--main-color) 56% 60%,
+    var(--bg-color) 60% 64%,
+    var(--main-color) 64% 68%,
+    var(--bg-color) 68% 72%,
+    var(--main-color) 72% 76%,
+    var(--bg-color) 76% 80%,
+    var(--main-color) 80% 84%,
+    var(--bg-color) 84% 88%,
+    var(--main-color) 88% 92%,
+    var(--bg-color) 92% 96%,
+    var(--main-color) 96% 100%
+  );
+}
+
+#ball {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(3%, 10px);
+  aspect-ratio: 1;
+  background-color: var(--main-color);
+}
