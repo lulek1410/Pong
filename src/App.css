@@ -1,21 +1,4 @@
-:is(#app-header, #app-footer) {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
-  padding: 0 20px;
-  width: 100%;
-
-  background-color: rgb(55, 58, 65);
-}
-
-#app-header {
-  height: 80px;
-}
-
-#app-footer {
-  height: 120px;
-}
 
 #app-main {
   flex: 1;

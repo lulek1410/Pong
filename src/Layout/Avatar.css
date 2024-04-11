@@ -1,0 +1,50 @@
+.user {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 10px;
+
+  height: 100%;
+  max-width: 400px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.user::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgb(177, 94, 0),
+    rgb(139, 74, 0),
+    rgba(177, 94, 0, 0.404)
+  );
+  z-index: -2;
+
+  transition: opacity 120ms ease-in-out, transform 200ms ease-in-out;
+  transform: scaleY(0);
+  opacity: 0;
+  transform-origin: top;
+}
+
+.user:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.avatar {
+  font-size: 26px;
+  color: white;
+}
+
+.avatar-container {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background-color: grey;
+  border-radius: 50%;
+}

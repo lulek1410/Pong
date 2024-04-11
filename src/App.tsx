@@ -1,14 +1,12 @@
 import "./App.css";
+import Footer from "./Layout/Footer";
+import Header from "./Layout/Header";
+import { StateProvider } from "./context/State";
 
 function App() {
   return (
-    <>
-      <header id="app-header">
-        <h2>PONG</h2>
-        <div>
-          <h4>user</h4>
-        </div>
-      </header>
+    <StateProvider>
+      <Header />
       <main id="app-main">
         <h1 className="score">0 : 0</h1>
         <div id="game-board">
@@ -18,11 +16,8 @@ function App() {
           <div className="player" id="player2"></div>
         </div>
       </main>
-      <footer id="app-footer">
-        <h2>PONG</h2>
-        <div>Credentials</div>
-      </footer>
-    </>
+      <Footer />
+    </StateProvider>
   );
 }
 
