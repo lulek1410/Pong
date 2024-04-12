@@ -1,5 +1,5 @@
 :root {
-  --main-color: rgb(245, 252, 255);
+  --main-color: hsl(198, 100%, 94%);
   --bg-color: #1d1d1d;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -39,4 +39,14 @@ a:hover {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: grey;
+  cursor: pointer;
+}
+
+.logo {
+  cursor: pointer;
 }

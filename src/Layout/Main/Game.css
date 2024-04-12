@@ -1,26 +1,3 @@
-
-
-#app-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-#game-board {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  width: 40svw;
-  height: 30svw;
-
-  border: 2px solid var(--main-color);
-}
-
 .player {
   height: 22%;
   width: max(3%, 10px);
@@ -33,6 +10,17 @@
 
 #player2 {
   margin-right: 4%;
+}
+
+#game-board {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 40svw;
+  height: 30svw;
+
+  border: 2px solid var(--main-color);
 }
 
 #board-middle-line {
@@ -75,4 +63,8 @@
   width: max(3%, 10px);
   aspect-ratio: 1;
   background-color: var(--main-color);
+}
+
+.score {
+  pointer-events: none;
 }

@@ -1,0 +1,10 @@
+.menu-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.menu-buttons button {
+  width: 120px;
+}
