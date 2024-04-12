@@ -4,8 +4,6 @@ import Main from "./Layout/Main/Main";
 
 import { StateProvider } from "./context/State";
 
-import "./App.css";
-
 function App() {
   return (
     <StateProvider>
