@@ -12,14 +12,19 @@ const Avatar = () => {
   ];
 
   return (
-    <Dropdown options={dropdownOptions}>
-      <div className="user">
-        <div className="avatar-container">
-          <FontAwesomeIcon icon={faUserAstronaut} className="avatar" />
-        </div>
-        <p>user_name_1234</p>
-      </div>
-    </Dropdown>
+    <Dropdown
+      renderElementWithDropdown={({ isDropdownOpen }) => {
+        return (
+          <div className={"user" + (isDropdownOpen ? " active" : "")}>
+            <div className="avatar-container">
+              <FontAwesomeIcon icon={faUserAstronaut} className="avatar" />
+            </div>
+            <p>user_name_1234</p>
+          </div>
+        );
+      }}
+      options={dropdownOptions}
+    />
   );
 };
 

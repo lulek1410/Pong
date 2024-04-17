@@ -35,6 +35,11 @@
   transform: scaleY(1);
 }
 
+.active.user::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
 .avatar {
   font-size: 26px;
   color: white;
