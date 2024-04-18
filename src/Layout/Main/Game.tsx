@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import "./Game.css";
 
 const Game = () => {
-  // const { gameState } = useContext(GameStateContext);
   const [player1Offset, setPlayer1Offset] = useState(0);
   const [player2Offset, setPlayer2Offset] = useState(0);
   const player1Ref = useRef<HTMLDivElement>(null);
   const player2Ref = useRef<HTMLDivElement>(null);
   const gameBoardRef = useRef<HTMLDivElement>(null);
   const keysPressed = useRef<{ [key: string]: boolean }>({});
+
+  const boardHeight = gameBoardRef.current?.clientHeight || 1;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -21,46 +22,50 @@ const Game = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+
     const offsetModifier = 2.5;
+    const player1Height = player1Ref.current?.clientHeight || 1;
     const offsetLimit =
       50 -
-      (((player1Ref.current?.clientHeight || 0) /
-        (gameBoardRef.current?.clientHeight || 1)) *
-        100) /
-        2;
-    const movePlayers = () => {
-      if (keysPressed.current["w"] && player1Offset > -offsetLimit) {
-        setPlayer1Offset((prevState) =>
-          Math.max(prevState - offsetModifier, -offsetLimit)
-        );
-      }
-      if (keysPressed.current["s"] && player1Offset < offsetLimit) {
-        setPlayer1Offset((prevState) =>
-          Math.min(prevState + offsetModifier, offsetLimit)
-        );
-      }
-      if (keysPressed.current["ArrowUp"] && player2Offset > -offsetLimit) {
-        setPlayer2Offset((prevState) =>
-          Math.max(prevState - offsetModifier, -offsetLimit)
-        );
-      }
-      if (keysPressed.current["ArrowDown"] && player2Offset < offsetLimit) {
-        setPlayer2Offset((prevState) =>
-          Math.min(prevState + offsetModifier, offsetLimit)
-        );
-      }
-    };
+      ((player1Height / (gameBoardRef.current?.clientHeight || 1)) * 100) / 2;
 
-    const moveInterval = setInterval(movePlayers, 50);
+    const moveInterval = setInterval(() => {
+      handlePlayerMovement(offsetModifier, offsetLimit);
+    }, 50);
 
     return () => {
       clearInterval(moveInterval);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [player1Offset, player2Offset]);
+  }, []);
 
-  const boardHeight = gameBoardRef.current?.clientHeight || 0;
+  const handlePlayerMovement = (
+    offsetModifier: number,
+    offsetLimit: number
+  ) => {
+    if (keysPressed.current["w"] && player1Offset > -offsetLimit) {
+      setPlayer1Offset((prevState) =>
+        Math.max(prevState - offsetModifier, -offsetLimit)
+      );
+    }
+    if (keysPressed.current["s"] && player1Offset < offsetLimit) {
+      setPlayer1Offset((prevState) =>
+        Math.min(prevState + offsetModifier, offsetLimit)
+      );
+    }
+    if (keysPressed.current["ArrowUp"] && player2Offset > -offsetLimit) {
+      setPlayer2Offset((prevState) =>
+        Math.max(prevState - offsetModifier, -offsetLimit)
+      );
+    }
+    if (keysPressed.current["ArrowDown"] && player2Offset < offsetLimit) {
+      setPlayer2Offset((prevState) =>
+        Math.min(prevState + offsetModifier, offsetLimit)
+      );
+    }
+  };
+
   return (
     <>
       <h1 className="score">0 : 0</h1>
