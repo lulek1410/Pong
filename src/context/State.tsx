@@ -1,19 +1,19 @@
 import { ReactNode, createContext, useState } from "react";
 
-export enum GameState {
+export enum AppState {
   MENU = "menu",
   HOTSEAT = "hotSeat",
   ONLINE = "online",
 }
 
-type GameStateType = {
-  gameState: GameState;
-  setGameState: (gameState: GameState) => void;
+type AppStateType = {
+  appState: AppState;
+  setAppState: (appState: AppState) => void;
 };
 
-export const GameStateContext = createContext<GameStateType>({
-  gameState: GameState.MENU,
-  setGameState: () => {
+export const AppStateContext = createContext<AppStateType>({
+  appState: AppState.MENU,
+  setAppState: () => {
     throw new Error("Function not implemented");
   },
 });
@@ -35,14 +35,14 @@ type Props = {
 };
 
 export const StateProvider = ({ children }: Props) => {
-  const [gameState, setGameState] = useState<GameState>(GameState.MENU);
+  const [appState, setAppState] = useState<AppState>(AppState.MENU);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <LoginStateContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-      <GameStateContext.Provider value={{ gameState, setGameState }}>
+      <AppStateContext.Provider value={{ appState, setAppState }}>
         {children}
-      </GameStateContext.Provider>
+      </AppStateContext.Provider>
     </LoginStateContext.Provider>
   );
 };

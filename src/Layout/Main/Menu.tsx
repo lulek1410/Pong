@@ -1,11 +1,11 @@
 import { useContext } from "react";
 
-import { GameState, GameStateContext } from "../../context/State";
+import { AppState, AppStateContext } from "../../context/State";
 
 import "./Menu.css";
 
 const Menu = () => {
-  const { setGameState } = useContext(GameStateContext);
+  const { setAppState } = useContext(AppStateContext);
 
   return (
     <>
@@ -13,14 +13,11 @@ const Menu = () => {
       <div className="menu-buttons">
         <button
           className="button"
-          onClick={() => setGameState(GameState.HOTSEAT)}
+          onClick={() => setAppState(AppState.HOTSEAT)}
         >
           Hot seat
         </button>
-        <button
-          className="button"
-          onClick={() => setGameState(GameState.ONLINE)}
-        >
+        <button className="button" onClick={() => setAppState(AppState.ONLINE)}>
           Play Online
         </button>
       </div>

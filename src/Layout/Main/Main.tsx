@@ -3,16 +3,16 @@ import { useContext } from "react";
 import Game from "./Game";
 import Menu from "./Menu";
 
-import { GameState, GameStateContext } from "../../context/State";
+import { AppState, AppStateContext } from "../../context/State";
 
 import "./Main.css";
 
 const Main = () => {
-  const { gameState } = useContext(GameStateContext);
+  const { appState } = useContext(AppStateContext);
 
   return (
     <main id="app-main">
-      {gameState === GameState.MENU ? <Menu /> : <Game />}
+      {appState === AppState.MENU ? <Menu /> : <Game />}
     </main>
   );
 };

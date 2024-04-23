@@ -1,13 +1,13 @@
 import { useContext } from "react";
-import { GameState, GameStateContext } from "../context/State";
+import { AppState, AppStateContext } from "../context/State";
 import "./styles.css";
 
 const Footer = () => {
-  const { setGameState } = useContext(GameStateContext);
+  const { setAppState } = useContext(AppStateContext);
 
   return (
     <footer id="app-footer">
-      <h2 className="logo" onClick={() => setGameState(GameState.MENU)}>
+      <h2 className="logo" onClick={() => setAppState(AppState.MENU)}>
         PONG
       </h2>
       <div>Credentials</div>
