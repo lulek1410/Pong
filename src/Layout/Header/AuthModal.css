@@ -1,0 +1,16 @@
+.mode-switch-button {
+  background-color: transparent;
+  border: none;
+  color: blue;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.mode-switch-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
