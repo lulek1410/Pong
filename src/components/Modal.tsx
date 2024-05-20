@@ -8,13 +8,14 @@ import "./Modal.css";
 interface OverlayProps {
   header?: ReactNode;
   footer?: ReactNode;
+  classNames?: string;
   children: ReactNode;
   onSubmit?: () => void;
 }
 
 const ModalOverlay = (props: OverlayProps) => {
   const content = (
-    <div className="modal">
+    <div className={`modal ${props.classNames}`}>
       {!!props.header && (
         <header className="modal-header">{props.header}</header>
       )}
