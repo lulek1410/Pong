@@ -1,6 +1,7 @@
 import Modal from "../../components/Modal";
 
 import "./AuthModal.css";
+import LoginForm from "./LoginForm";
 
 export enum AuthModalMode {
   LOGIN = "login",
@@ -26,6 +27,7 @@ const AuthModal = (props: Props) => {
       header={<ModalHeader mode={props.mode} />}
     >
       <>
+        <div>{props.mode === AuthModalMode.LOGIN ? <LoginForm /> : <></>}</div>
         <button type="submit" className="button">
           {props.mode === AuthModalMode.LOGIN ? "Log In" : "Register"}
         </button>
