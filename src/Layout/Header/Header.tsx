@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 
 import Avatar from "../Avatar";
 
-import AuthModal, { AuthModalMode } from "./AuthModal";
+import AuthModal, { AuthModalMode } from "./AuthModal/AuthModal";
 
 import "./Header.css";
 
