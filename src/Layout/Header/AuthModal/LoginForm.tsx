@@ -20,21 +20,23 @@ const LoginForm = () => {
   return (
     <div className="inputs-container">
       <input
-        className="input"
+        className={`input ${!formState.login.isValid ? "invalid" : null}`}
         type="text"
         value={formState.login.value}
-        onInput={(e: ChangeEvent<HTMLInputElement>) =>
-          updateInput("login", e.target.value)
-        }
+        onInput={(e: ChangeEvent<HTMLInputElement>) => {
+          const value = e.target.value;
+          updateInput("login", value, value.length > 0);
+        }}
         placeholder="Login"
       />
       <input
-        className="input"
+        className={`input ${!formState.password.isValid ? "invalid" : null}`}
         type="password"
         value={formState.password.value}
-        onInput={(e: ChangeEvent<HTMLInputElement>) =>
-          updateInput("password", e.target.value)
-        }
+        onInput={(e: ChangeEvent<HTMLInputElement>) => {
+          const value = e.target.value;
+          updateInput("password", value, value.length > 6);
+        }}
         placeholder="Password"
       />
     </div>

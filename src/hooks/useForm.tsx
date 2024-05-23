@@ -14,6 +14,7 @@ interface InputChangeAction {
   payload: {
     inputId: string;
     newValue: string;
+    isValid: boolean;
   };
 }
 
@@ -33,7 +34,7 @@ const reducer = (state: FormState, action: FormActions): FormState => {
         ...state,
         [action.payload.inputId]: {
           value: action.payload.newValue,
-          isValid: true,
+          isValid: action.payload.isValid,
         },
       };
     }
@@ -48,12 +49,13 @@ const reducer = (state: FormState, action: FormActions): FormState => {
 export const useForm = (initialFormState: FormState) => {
   const [formState, dispatch] = useReducer(reducer, initialFormState);
 
-  const updateInput = (id: string, value: string | null) => {
+  const updateInput = (id: string, value: string | null, isValid: boolean) => {
     dispatch({
       type: FormActionType.INPUT_CHANGE,
       payload: {
         inputId: id,
         newValue: value || "",
+        isValid,
       },
     });
   };
