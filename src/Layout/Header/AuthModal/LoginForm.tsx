@@ -9,7 +9,11 @@ interface LoginFormState extends FormState {
   password: { value: string; isValid: boolean };
 }
 
-const LoginForm = () => {
+interface Props {
+  closeModal: () => void;
+}
+
+const LoginForm = ({ closeModal }: Props) => {
   const initialFormState: LoginFormState = {
     login: { value: "", isValid: true },
     password: { value: "", isValid: true },

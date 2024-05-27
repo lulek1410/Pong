@@ -9,11 +9,11 @@ import Dropdown, { Option } from "../components/Dropdown";
 import "./Avatar.css";
 
 const Avatar = () => {
-  const { setIsLoggedIn } = useContext(LoginStateContext);
+  const { setUser, user } = useContext(LoginStateContext);
 
   const dropdownOptions: Option[] = [
     { name: "Edit profile picture", action: () => {} },
-    { name: "Log out", action: () => setIsLoggedIn(false) },
+    { name: "Log out", action: () => setUser(null) },
   ];
 
   return (
@@ -24,7 +24,7 @@ const Avatar = () => {
             <div className="avatar-container">
               <FontAwesomeIcon icon={faUserAstronaut} className="avatar" />
             </div>
-            <p>user_name_1234</p>
+            <p>{user?.name}</p>
           </div>
         );
       }}

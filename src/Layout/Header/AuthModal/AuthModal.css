@@ -17,4 +17,5 @@
 
 .auth-modal {
   width: 30%;
+  min-width: 400px;
 }

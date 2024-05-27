@@ -18,14 +18,19 @@ export const AppStateContext = createContext<AppStateType>({
   },
 });
 
+interface User {
+  id: string;
+  name: string;
+}
+
 type LoginStateType = {
-  isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 
 export const LoginStateContext = createContext<LoginStateType>({
-  isLoggedIn: false,
-  setIsLoggedIn: () => {
+  user: null,
+  setUser: () => {
     throw new Error("Function not implemented");
   },
 });
@@ -36,10 +41,10 @@ type Props = {
 
 export const StateProvider = ({ children }: Props) => {
   const [appState, setAppState] = useState<AppState>(AppState.MENU);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   return (
-    <LoginStateContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+    <LoginStateContext.Provider value={{ user, setUser }}>
       <AppStateContext.Provider value={{ appState, setAppState }}>
         {children}
       </AppStateContext.Provider>

@@ -7,29 +7,33 @@ import { FormState, useForm } from "../../../hooks/useForm";
 import "./Form.css";
 
 interface RegisterFormState extends FormState {
-  login: { value: string; isValid: boolean };
+  name: { value: string; isValid: boolean };
   email: { value: string; isValid: boolean };
   password: { value: string; isValid: boolean };
   repeatedPassword: { value: string; isValid: boolean };
 }
 
-const RegisterForm = () => {
+interface Props {
+  closeModal: () => void;
+}
+
+const RegisterForm = ({ closeModal }: Props) => {
   const initialFormState: RegisterFormState = {
-    login: { value: "", isValid: true },
+    name: { value: "", isValid: true },
     email: { value: "", isValid: true },
     password: { value: "", isValid: true },
     repeatedPassword: { value: "", isValid: true },
   };
-  const { setIsLoggedIn } = useContext(LoginStateContext);
+  const { setUser } = useContext(LoginStateContext);
   const { formState, updateInput } = useForm(initialFormState);
   const [error, setError] = useState<string | null>(null);
 
   const register = async () => {
     const formData = new FormData();
-    formData.append("login", formState.login.value);
+    formData.append("name", formState.name.value);
     formData.append("email", formState.email.value);
     formData.append("password", formState.password.value);
-    const response = await fetch("api/users/register", {
+    const response = await fetch("http://localhost:5000/api/users/register", {
       method: "POST",
       body: formData,
     });
@@ -42,8 +46,9 @@ const RegisterForm = () => {
 
   const mutation = useMutation({
     mutationFn: register,
-    onSuccess: () => {
-      setIsLoggedIn(true);
+    onSuccess: (user: { id: string; name: string }) => {
+      setUser(user);
+      closeModal();
     },
     onError: (error: Error) => {
       setError(error.message);
@@ -58,17 +63,17 @@ const RegisterForm = () => {
     <>
       <div className="inputs-container">
         <input
-          className={`input ${!formState.login.isValid ? "invalid" : null}`}
+          className={`input ${!formState.name.isValid ? "invalid" : null}`}
           type="text"
-          value={formState.login.value}
+          value={formState.name.value}
           onInput={(e: ChangeEvent<HTMLInputElement>) => {
             const value = e.target.value;
             const isValid = value.length > 0;
-            updateInput("login", value, isValid);
+            updateInput("name", value, isValid);
           }}
-          placeholder="Login"
+          placeholder="Nick"
         />
-        <p>{formState.login.isValid ? "" : "Login is mandatory"}</p>
+        <p>{formState.name.isValid ? "" : "Login is mandatory"}</p>
         <input
           className={`input ${!formState.email.isValid ? "invalid" : null}`}
           type="text"

@@ -29,7 +29,11 @@ const AuthModal = (props: Props) => {
       classNames="auth-modal"
     >
       <>
-        {props.mode === AuthModalMode.LOGIN ? <LoginForm /> : <RegisterForm />}
+        {props.mode === AuthModalMode.LOGIN ? (
+          <LoginForm closeModal={props.closeModal} />
+        ) : (
+          <RegisterForm closeModal={props.closeModal} />
+        )}
         <div className="mode-switch-container">
           <p>
             {props.mode === AuthModalMode.LOGIN
