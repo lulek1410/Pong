@@ -29,16 +29,7 @@ const AuthModal = (props: Props) => {
       classNames="auth-modal"
     >
       <>
-        <div>
-          {props.mode === AuthModalMode.LOGIN ? (
-            <LoginForm />
-          ) : (
-            <RegisterForm />
-          )}
-        </div>
-        <button type="submit" className="button">
-          {props.mode === AuthModalMode.LOGIN ? "Log In" : "Register"}
-        </button>
+        {props.mode === AuthModalMode.LOGIN ? <LoginForm /> : <RegisterForm />}
         <div className="mode-switch-container">
           <p>
             {props.mode === AuthModalMode.LOGIN
