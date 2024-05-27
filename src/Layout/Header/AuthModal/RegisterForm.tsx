@@ -1,5 +1,7 @@
-import { ChangeEvent } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { ChangeEvent, useContext, useState } from "react";
 
+import { LoginStateContext } from "../../../context/State";
 import { FormState, useForm } from "../../../hooks/useForm";
 
 import "./Form.css";
@@ -18,8 +20,39 @@ const RegisterForm = () => {
     password: { value: "", isValid: true },
     repeatedPassword: { value: "", isValid: true },
   };
-
+  const { setIsLoggedIn } = useContext(LoginStateContext);
   const { formState, updateInput } = useForm(initialFormState);
+  const [error, setError] = useState<string | null>(null);
+
+  const register = async () => {
+    const formData = new FormData();
+    formData.append("login", formState.login.value);
+    formData.append("email", formState.email.value);
+    formData.append("password", formState.password.value);
+    const response = await fetch("api/users/register", {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error("Login failed. " + errorData.message);
+    }
+    return response.json();
+  };
+
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      setIsLoggedIn(true);
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
+  const isFormInvalid = () => {
+    return Object.values(formState).some((el) => !el.isValid || !el.value);
+  };
 
   return (
     <>
@@ -30,10 +63,12 @@ const RegisterForm = () => {
           value={formState.login.value}
           onInput={(e: ChangeEvent<HTMLInputElement>) => {
             const value = e.target.value;
-            updateInput("login", value, value.length > 0);
+            const isValid = value.length > 0;
+            updateInput("login", value, isValid);
           }}
           placeholder="Login"
         />
+        <p>{formState.login.isValid ? "" : "Login is mandatory"}</p>
         <input
           className={`input ${!formState.email.isValid ? "invalid" : null}`}
           type="text"
@@ -48,6 +83,7 @@ const RegisterForm = () => {
           }}
           placeholder="Email"
         />
+        <p>{formState.email.isValid ? "" : "Email format invalid"}</p>
         <input
           className={`input ${!formState.password.isValid ? "invalid" : null}`}
           type="password"
@@ -58,6 +94,11 @@ const RegisterForm = () => {
           }}
           placeholder="Password"
         />
+        <p>
+          {formState.password.isValid
+            ? ""
+            : "Password must be at least 6 characters long"}
+        </p>
         <input
           className={`input ${
             !formState.repeatedPassword.isValid ? "invalid" : null
@@ -74,8 +115,22 @@ const RegisterForm = () => {
           }}
           placeholder="Repeat password"
         />
+        <p>
+          {formState.repeatedPassword.isValid
+            ? ""
+            : "Value is too short or does not match the password above"}
+        </p>
       </div>
-      <button type="submit" className="button">
+      <p>{error}</p>
+      <button
+        type="submit"
+        className="button"
+        onClick={(e) => {
+          e.preventDefault();
+          mutation.mutate();
+        }}
+        disabled={isFormInvalid()}
+      >
         Register
       </button>
     </>

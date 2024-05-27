@@ -47,7 +47,7 @@ a:hover {
   cursor: pointer;
 }
 
-.button:hover {
+.button:not(:disabled):hover {
   background-color: rgb(155, 155, 155);
 }
 
