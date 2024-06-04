@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, useContext, useState } from "react";
 
-import { LoginStateContext } from "../../../context/State";
+import { LoginStateContext, User } from "../../../context/State";
 import { FormState, useForm } from "../../../hooks/useForm";
 
 import "./Form.css";
@@ -46,7 +46,7 @@ const RegisterForm = ({ closeModal }: Props) => {
 
   const mutation = useMutation({
     mutationFn: register,
-    onSuccess: (user: { id: string; name: string }) => {
+    onSuccess: (user: User) => {
       setUser(user);
       closeModal();
     },

@@ -18,9 +18,10 @@ export const AppStateContext = createContext<AppStateType>({
   },
 });
 
-interface User {
+export interface User {
   id: string;
   name: string;
+  email: string;
 }
 
 type LoginStateType = {
