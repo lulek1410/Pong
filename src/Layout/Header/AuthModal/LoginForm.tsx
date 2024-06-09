@@ -1,10 +1,12 @@
 import { ChangeEvent, useContext, useState } from "react";
 
+import { useMutation } from "@tanstack/react-query";
+
 import { FormState, useForm } from "../../../hooks/useForm";
 
-import "./Form.css";
-import { useMutation } from "@tanstack/react-query";
 import { LoginStateContext, User } from "../../../context/State";
+
+import "./Form.css";
 
 interface LoginFormState extends FormState {
   email: { value: string; isValid: boolean };
@@ -22,10 +24,10 @@ const LoginForm = ({ closeModal }: Props) => {
   };
 
   const { formState, updateInput } = useForm(initialFormState);
-  const { setUser } = useContext(LoginStateContext);
+  const { login } = useContext(LoginStateContext);
   const [error, setError] = useState<string | null>(null);
 
-  const login = async () => {
+  const loginApi = async () => {
     const formData = new FormData();
     formData.append("email", formState.email.value);
     formData.append("password", formState.password.value);
@@ -41,9 +43,9 @@ const LoginForm = ({ closeModal }: Props) => {
   };
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: loginApi,
     onSuccess: (user: User) => {
-      setUser(user);
+      login(user);
       closeModal();
     },
     onError: (error: Error) => {

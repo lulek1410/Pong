@@ -20,7 +20,7 @@ interface ModalState {
 }
 
 const Header = () => {
-  const { user } = useContext(LoginStateContext);
+  const { isLoggedIn } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
 
   const [authModal, setAuthModal] = useState<ModalState>({
@@ -59,7 +59,7 @@ const Header = () => {
           PONG
         </h2>
         <div>
-          {user ? (
+          {isLoggedIn ? (
             <Avatar />
           ) : (
             <div className="header-buttons-container">

@@ -24,7 +24,7 @@ const RegisterForm = ({ closeModal }: Props) => {
     password: { value: "", isValid: true },
     repeatedPassword: { value: "", isValid: true },
   };
-  const { setUser } = useContext(LoginStateContext);
+  const { login } = useContext(LoginStateContext);
   const { formState, updateInput } = useForm(initialFormState);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +47,7 @@ const RegisterForm = ({ closeModal }: Props) => {
   const mutation = useMutation({
     mutationFn: register,
     onSuccess: (user: User) => {
-      setUser(user);
+      login(user);
       closeModal();
     },
     onError: (error: Error) => {

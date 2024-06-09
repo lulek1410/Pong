@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 export enum AppState {
   MENU = "menu",
@@ -19,19 +20,28 @@ export const AppStateContext = createContext<AppStateType>({
 });
 
 export interface User {
-  id: string;
+  userId: string;
   name: string;
   email: string;
+  token: string;
 }
 
-type LoginStateType = {
-  user: User | null;
-  setUser: (user: User | null) => void;
+type LoginStateType = { [P in keyof User]: User[P] | null } & {
+  isLoggedIn: boolean;
+  login: (user: User, expirationDate?: Date) => void;
+  logout: () => void;
 };
 
 export const LoginStateContext = createContext<LoginStateType>({
-  user: null,
-  setUser: () => {
+  isLoggedIn: false,
+  userId: null,
+  name: null,
+  email: null,
+  token: null,
+  login(_user, _expirationDate) {
+    throw new Error("Function not implemented");
+  },
+  logout: () => {
     throw new Error("Function not implemented");
   },
 });
@@ -42,10 +52,20 @@ type Props = {
 
 export const StateProvider = ({ children }: Props) => {
   const [appState, setAppState] = useState<AppState>(AppState.MENU);
-  const [user, setUser] = useState<User | null>(null);
+  const { userId, email, name, token, login, logout } = useAuth();
 
   return (
-    <LoginStateContext.Provider value={{ user, setUser }}>
+    <LoginStateContext.Provider
+      value={{
+        isLoggedIn: !!token,
+        userId,
+        name,
+        email,
+        token,
+        login,
+        logout,
+      }}
+    >
       <AppStateContext.Provider value={{ appState, setAppState }}>
         {children}
       </AppStateContext.Provider>
