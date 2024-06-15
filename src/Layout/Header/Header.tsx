@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 
 import Avatar from "../Avatar";
 
-import AuthModal, { AuthModalMode } from "./AuthModal/AuthModal";
+import AuthModal, { AuthModalMode, ModalState } from "../../components/AuthModal";
 
 import "./Header.css";
 
@@ -14,10 +14,6 @@ import {
 
 import "../styles.css";
 
-interface ModalState {
-  isOpen: boolean;
-  mode: AuthModalMode;
-}
 
 const Header = () => {
   const { isLoggedIn } = useContext(LoginStateContext);

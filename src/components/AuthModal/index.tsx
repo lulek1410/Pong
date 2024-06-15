@@ -1,12 +1,17 @@
-import Modal from "../../../components/Modal";
+import Modal from "../Modal";
 
-import "./AuthModal.css";
+import "./index.css";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
 export enum AuthModalMode {
   LOGIN = "login",
   REGISTER = "register",
+}
+
+export interface ModalState {
+  isOpen: boolean;
+  mode: AuthModalMode;
 }
 
 type Props = {

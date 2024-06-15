@@ -2,9 +2,9 @@ import { ChangeEvent, useContext, useState } from "react";
 
 import { useMutation } from "@tanstack/react-query";
 
-import { FormState, useForm } from "../../../hooks/useForm";
+import { FormState, useForm } from "../../hooks/useForm";
 
-import { LoginStateContext, User } from "../../../context/State";
+import { LoginStateContext, User } from "../../context/State";
 
 import "./Form.css";
 
