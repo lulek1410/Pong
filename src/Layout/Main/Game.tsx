@@ -1,5 +1,6 @@
+import { useOnlineGameLogic } from "../../hooks/useOnlineGameLogic";
+
 import "./Game.css";
-import useLocalGameLogic from "../../hooks/useLocalGameLogic";
 
 const Game = () => {
   const {
@@ -12,7 +13,7 @@ const Game = () => {
     ballRef,
     gameBoardRef,
     calculateOffsetInPx,
-  } = useLocalGameLogic();
+  } = useOnlineGameLogic(); // useLocalGameLogic();
 
   return (
     <>
