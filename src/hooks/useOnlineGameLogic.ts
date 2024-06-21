@@ -1,6 +1,18 @@
 import { useContext, useEffect, useRef } from "react";
 import { LoginStateContext } from "../context/State";
 
+interface ConnectedMsg {
+  type: "connected";
+  params: { room: string; clientsNumber: number };
+}
+
+interface ErrorMsg {
+  type: "full" | "error";
+  params: { room: string };
+}
+
+type RespMessage = ConnectedMsg | ErrorMsg;
+
 export const useOnlineGameLogic = () => {
   const points = { player1: 0, player2: 0 };
   const player1Offset = 0;
@@ -20,18 +32,26 @@ export const useOnlineGameLogic = () => {
   // let ballPhi = 0;
   // const maxPhi = 75;
 
-  const { name } = useContext(LoginStateContext);
+  const { name, userId } = useContext(LoginStateContext);
   const socket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:5000/");
 
     ws.onopen = () => {
-      ws.send(`Hello from user: ${name}`);
+      const initMessage = {
+        type: "init",
+        params: { userId: userId },
+      };
+      ws.send(JSON.stringify(initMessage));
     };
 
-    ws.onmessage = (event: MessageEvent) => {
-      console.log("Received a message: " + event.data);
+    ws.onmessage = (event: MessageEvent<RespMessage>) => {
+      console.log(
+        "Received a message: " +
+          event.data.type +
+          JSON.stringify(event.data.params)
+      );
     };
 
     ws.onerror = (error) => {
