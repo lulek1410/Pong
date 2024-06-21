@@ -1,8 +1,34 @@
-import { useOnlineGameLogic } from "../../hooks/useOnlineGameLogic";
+import { RefObject } from "react";
 
 import "./Game.css";
 
-const Game = () => {
+export interface Points {
+  player1: number;
+  player2: number;
+}
+
+export interface BallOffset {
+  x: number;
+  y: number;
+}
+
+export interface GameLogic {
+  points: Points;
+  player1Offset: number;
+  player2Offset: number;
+  ballOffset: BallOffset;
+  player1Ref: RefObject<HTMLDivElement>;
+  player2Ref: RefObject<HTMLDivElement>;
+  ballRef: RefObject<HTMLDivElement>;
+  gameBoardRef: RefObject<HTMLDivElement>;
+  calculateOffsetInPx: (offset: number, direction: "x" | "y") => string;
+}
+
+interface Props {
+  useGameLogic: () => GameLogic;
+}
+
+const Game = ({ useGameLogic }: Props) => {
   const {
     points,
     player1Offset,
@@ -13,7 +39,7 @@ const Game = () => {
     ballRef,
     gameBoardRef,
     calculateOffsetInPx,
-  } = useOnlineGameLogic(); // useLocalGameLogic();
+  } = useGameLogic();
 
   return (
     <>

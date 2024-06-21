@@ -21,7 +21,7 @@ const AuthorizationButtons = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      setAppState(AppState.ONLINE);
+      setAppState(AppState.ONLINE_MENU);
     }
   }, [isLoggedIn]);
 
@@ -54,7 +54,10 @@ const AuthorizationButtons = () => {
       <button className="button" onClick={openModal}>
         Log in
       </button>
-      <button className="button" onClick={() => setAppState(AppState.ONLINE)}>
+      <button
+        className="button"
+        onClick={() => setAppState(AppState.ONLINE_MENU)}
+      >
         Guest
       </button>
     </>

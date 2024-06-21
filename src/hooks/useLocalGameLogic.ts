@@ -1,16 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { Points, BallOffset, GameLogic } from "../Layout/Main/Game";
 
-interface Points {
-  player1: number;
-  player2: number;
-}
-
-interface BallOffset {
-  x: number;
-  y: number;
-}
-
-const useLocalGameLogic = () => {
+const useLocalGameLogic = (): GameLogic => {
   const [points, setPoints] = useState<Points>({ player1: 0, player2: 0 });
   const [player1Offset, setPlayer1Offset] = useState(0);
   const [player2Offset, setPlayer2Offset] = useState(0);
@@ -74,13 +65,11 @@ const useLocalGameLogic = () => {
       );
     }
     if (keysPressed.current["ArrowUp"] && player2Offset > -offsetLimit) {
-      console.log("ArrowUp");
       setPlayer2Offset((prevState) =>
         Math.max(prevState - offsetModifier, -offsetLimit)
       );
     }
     if (keysPressed.current["ArrowDown"] && player2Offset < offsetLimit) {
-      console.log("ArrowDown");
       setPlayer2Offset((prevState) =>
         Math.min(prevState + offsetModifier, offsetLimit)
       );

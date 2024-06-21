@@ -1,9 +1,10 @@
 import { useContext, useEffect, useRef } from "react";
 import { LoginStateContext } from "../context/State";
+import { GameLogic } from "../Layout/Main/Game";
 
 interface ConnectedMsg {
   type: "connected";
-  params: { room: string; clientsNumber: number };
+  params: { room: string; userIds: number };
 }
 
 interface ErrorMsg {
@@ -13,7 +14,7 @@ interface ErrorMsg {
 
 type RespMessage = ConnectedMsg | ErrorMsg;
 
-export const useOnlineGameLogic = () => {
+export const useOnlineGameLogic = (): GameLogic => {
   const points = { player1: 0, player2: 0 };
   const player1Offset = 0;
   const player2Offset = 0;
@@ -47,11 +48,15 @@ export const useOnlineGameLogic = () => {
     };
 
     ws.onmessage = (event: MessageEvent<RespMessage>) => {
-      console.log(
-        "Received a message: " +
-          event.data.type +
-          JSON.stringify(event.data.params)
-      );
+      const msg: RespMessage = JSON.parse(event.data.toString());
+      switch (msg.type) {
+        case "connected":
+          break;
+        case "error":
+          break;
+        case "full":
+          break;
+      }
     };
 
     ws.onerror = (error) => {

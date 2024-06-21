@@ -5,6 +5,7 @@ export enum AppState {
   MENU = "menu",
   HOTSEAT = "hotSeat",
   ONLINE = "online",
+  ONLINE_MENU = "onlineMenu",
 }
 
 type AppStateType = {

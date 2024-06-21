@@ -16,7 +16,7 @@ const GameModeButtons = ({ setShowLogindButtons }: Props) => {
 
   const handleOnlineGameClick = () => {
     if (isLoggedIn) {
-      setAppState(AppState.ONLINE)
+      setAppState(AppState.ONLINE_MENU);
     } else {
       setShowLogindButtons(true);
     }
