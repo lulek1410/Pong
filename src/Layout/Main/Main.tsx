@@ -2,12 +2,13 @@ import { useContext } from "react";
 
 import Game from "./Game";
 import Menu from "./Menu";
+import { OnlineMenu } from "./OnlineMenu";
 
 import { AppState, AppStateContext } from "../../context/State";
-
-import "./Main.css";
 import useLocalGameLogic from "../../hooks/useLocalGameLogic";
 import { useOnlineGameLogic } from "../../hooks/useOnlineGameLogic";
+
+import "./Main.css";
 
 const Main = () => {
   const { appState } = useContext(AppStateContext);
@@ -17,7 +18,7 @@ const Main = () => {
       case AppState.MENU:
         return <Menu />;
       case AppState.ONLINE_MENU:
-        return <></>;
+        return <OnlineMenu />;
       case AppState.ONLINE:
         return <Game useGameLogic={useOnlineGameLogic} />;
       case AppState.HOTSEAT:

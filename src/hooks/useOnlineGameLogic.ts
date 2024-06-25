@@ -1,20 +1,9 @@
-import { useContext, useEffect, useRef } from "react";
-import { LoginStateContext } from "../context/State";
+import { useEffect, useRef } from "react";
 import { GameLogic } from "../Layout/Main/Game";
 
-interface ConnectedMsg {
-  type: "connected";
-  params: { room: string; userIds: number };
-}
-
-interface ErrorMsg {
-  type: "full" | "error";
-  params: { room: string };
-}
-
-type RespMessage = ConnectedMsg | ErrorMsg;
-
 export const useOnlineGameLogic = (): GameLogic => {
+  // const { ready, val, send } = useContext(WebsocketContext);
+
   const points = { player1: 0, player2: 0 };
   const player1Offset = 0;
   const player2Offset = 0;
@@ -24,7 +13,7 @@ export const useOnlineGameLogic = (): GameLogic => {
   const player2Ref = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLDivElement>(null);
   const gameBoardRef = useRef<HTMLDivElement>(null);
-  // const keysPressed = useRef<{ [key: string]: boolean }>({});
+  const keysPressed = useRef<{ [key: string]: boolean }>({});
 
   const boardHeight = gameBoardRef.current?.clientHeight || 1;
   const boardWidth = gameBoardRef.current?.clientWidth || 1;
@@ -33,48 +22,43 @@ export const useOnlineGameLogic = (): GameLogic => {
   // let ballPhi = 0;
   // const maxPhi = 75;
 
-  const { name, userId } = useContext(LoginStateContext);
-  const socket = useRef<WebSocket | null>(null);
+  const handleBallMovement = () => {};
+  const handlePlayerMovement = (
+    offsetModifier: number,
+    offsetLimit: number
+  ) => {
+    console.log("offsetModifier", offsetModifier, "offsetLimit", offsetLimit);
+  };
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:5000/");
-
-    ws.onopen = () => {
-      const initMessage = {
-        type: "init",
-        params: { userId: userId },
-      };
-      ws.send(JSON.stringify(initMessage));
+    const handleKeyDown = (e: KeyboardEvent) => {
+      keysPressed.current[e.key] = true;
     };
 
-    ws.onmessage = (event: MessageEvent<RespMessage>) => {
-      const msg: RespMessage = JSON.parse(event.data.toString());
-      switch (msg.type) {
-        case "connected":
-          break;
-        case "error":
-          break;
-        case "full":
-          break;
-      }
+    const handleKeyUp = (e: KeyboardEvent) => {
+      keysPressed.current[e.key] = false;
     };
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
-    ws.onclose = (event) => {
-      console.log("WebSocket connection closed:", event);
-    };
+    const offsetModifier = 2.5;
+    const player1Height = player1Ref.current?.clientHeight || 1;
+    const offsetLimit =
+      50 -
+      ((player1Height / (gameBoardRef.current?.clientHeight || 1)) * 100) / 2;
 
-    socket.current = ws;
+    const moveInterval = setInterval(() => {
+      handleBallMovement();
+      handlePlayerMovement(offsetModifier, offsetLimit);
+    }, 50);
 
     return () => {
-      if (ws.readyState === 1) {
-        ws.close();
-      }
+      clearInterval(moveInterval);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [name]);
+  }, []);
 
   const calculateOffsetInPx = (offset: number, direction: "x" | "y") => {
     return `${
