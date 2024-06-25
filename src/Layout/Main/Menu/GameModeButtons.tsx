@@ -7,10 +7,10 @@ import {
 } from "../../../context/State";
 
 interface Props {
-  setShowLogindButtons: Dispatch<SetStateAction<boolean>>;
+  setShowLoginButtons: Dispatch<SetStateAction<boolean>>;
 }
 
-const GameModeButtons = ({ setShowLogindButtons }: Props) => {
+const GameModeButtons = ({ setShowLoginButtons }: Props) => {
   const { setAppState } = useContext(AppStateContext);
   const { isLoggedIn } = useContext(LoginStateContext);
 
@@ -18,7 +18,7 @@ const GameModeButtons = ({ setShowLogindButtons }: Props) => {
     if (isLoggedIn) {
       setAppState(AppState.ONLINE_MENU);
     } else {
-      setShowLogindButtons(true);
+      setShowLoginButtons(true);
     }
   };
 

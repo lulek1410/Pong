@@ -5,7 +5,7 @@ import GameModeButtons from "./GameModeButtons";
 import "./index.css";
 
 const Menu = () => {
-  const [showLoginButtons, setShowLogindButtons] = useState(false);
+  const [showLoginButtons, setShowLoginButtons] = useState(false);
 
   return (
     <>
@@ -16,7 +16,7 @@ const Menu = () => {
         {showLoginButtons ? (
           <AuthorizationButtons />
         ) : (
-          <GameModeButtons setShowLogindButtons={setShowLogindButtons} />
+          <GameModeButtons setShowLoginButtons={setShowLoginButtons} />
         )}
       </div>
     </>
