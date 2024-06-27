@@ -55,6 +55,11 @@ export const StateProvider = ({ children }: Props) => {
   const [appState, setAppState] = useState<AppState>(AppState.MENU);
   const { userId, email, name, token, login, logout } = useAuth();
 
+  const logoutWrapped = () => {
+    setAppState(AppState.MENU);
+    logout();
+  };
+
   return (
     <LoginStateContext.Provider
       value={{
@@ -64,7 +69,7 @@ export const StateProvider = ({ children }: Props) => {
         email,
         token,
         login,
-        logout,
+        logout: logoutWrapped,
       }}
     >
       <AppStateContext.Provider value={{ appState, setAppState }}>

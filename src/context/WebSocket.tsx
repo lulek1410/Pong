@@ -29,46 +29,48 @@ export const WebsocketProvider = ({ children }: Props) => {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket("wss://echo.websocket.events/");
+    if (userId) {
+      const socket = new WebSocket("ws://localhost:5000");
 
-    socket.onopen = () => {
-      const initMessage = {
-        type: "init",
-        params: { userId: userId },
+      socket.onopen = () => {
+        const initMessage = {
+          type: "init",
+          params: { userId: userId },
+        };
+        socket.send(JSON.stringify(initMessage));
+        setIsReady(true);
       };
-      socket.send(JSON.stringify(initMessage));
-      setIsReady(true);
-    };
 
-    socket.onmessage = (event: MessageEvent<RespMessage>) => {
-      const msg: RespMessage = JSON.parse(event.data.toString());
-      setVal(msg);
-      // switch (msg.type) {
-      //   case "connected":
-      //     break;
-      //   case "error":
-      //     break;
-      //   case "full":
-      //     break;
-      // }
-    };
+      socket.onmessage = (event: MessageEvent<RespMessage>) => {
+        const msg: RespMessage = JSON.parse(event.data.toString());
+        setVal(msg);
+        console.log(msg);
+        // switch (msg.type) {
+        //   case "connected":
+        //     break;
+        //   case "error":
+        //     break;
+        //   case "full":
+        //     break;
+        // }
+      };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
 
-    socket.onclose = (event) => {
-      setIsReady(false);
-      console.log("WebSocket connection closed:", event);
-    };
-    socket.onmessage = (event) => setVal(event.data);
+      socket.onclose = (event) => {
+        setIsReady(false);
+        console.log("WebSocket connection closed:", event);
+      };
 
-    ws.current = socket;
+      ws.current = socket;
+    }
 
     return () => {
-      socket.close();
+      ws.current?.close();
     };
-  }, []);
+  }, [userId]);
 
   const send = (message: ReqMessage) => {
     ws.current?.send.call(ws.current, JSON.stringify(message));

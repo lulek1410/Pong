@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
+import { v4 } from "uuid";
+
 import {
   AppState,
   AppStateContext,
@@ -17,7 +19,7 @@ const AuthorizationButtons = () => {
     isOpen: false,
     mode: AuthModalMode.LOGIN,
   });
-  const { isLoggedIn } = useContext(LoginStateContext);
+  const { isLoggedIn, login } = useContext(LoginStateContext);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -56,7 +58,15 @@ const AuthorizationButtons = () => {
       </button>
       <button
         className="button"
-        onClick={() => setAppState(AppState.ONLINE_MENU)}
+        onClick={() => {
+          login({
+            userId: v4(),
+            name: "Guest",
+            email: "",
+            token: "GuestToken",
+          });
+          setAppState(AppState.ONLINE_MENU);
+        }}
       >
         Guest
       </button>
