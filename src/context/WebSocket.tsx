@@ -21,12 +21,29 @@ type Props = {
   children: ReactNode;
 };
 
+enum PendingType {
+  INIT = "init",
+  ROOM = "room",
+  UPDATE = "update",
+}
+
+const initialPendingState: Record<PendingType, boolean> = {
+  init: false,
+  room: false,
+  update: false,
+};
+
 export const WebsocketProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
+  const [pending, setPending] = useState(initialPendingState);
   const [val, setVal] = useState<RespMessage | null>(null);
 
   const { userId } = useContext(LoginStateContext);
   const ws = useRef<WebSocket | null>(null);
+
+  const updatePending = (type: PendingType, isPending: boolean) => {
+    setPending((prevState) => ({ ...prevState, [type]: isPending }));
+  };
 
   useEffect(() => {
     if (userId) {
@@ -38,6 +55,7 @@ export const WebsocketProvider = ({ children }: Props) => {
           params: { userId: userId },
         };
         socket.send(JSON.stringify(initMessage));
+        updatePending(PendingType.INIT, true);
         setIsReady(true);
       };
 
@@ -45,14 +63,18 @@ export const WebsocketProvider = ({ children }: Props) => {
         const msg: RespMessage = JSON.parse(event.data.toString());
         setVal(msg);
         console.log(msg);
-        // switch (msg.type) {
-        //   case "connected":
-        //     break;
-        //   case "error":
-        //     break;
-        //   case "full":
-        //     break;
-        // }
+        switch (msg.type) {
+          case "info":
+            if (msg.params.room === "initialized")
+              updatePending(PendingType.INIT, false);
+            break;
+          case "connected":
+            break;
+          case "error":
+            break;
+          case "full":
+            break;
+        }
       };
 
       socket.onerror = (error) => {
@@ -78,6 +100,7 @@ export const WebsocketProvider = ({ children }: Props) => {
 
   const ret = {
     ready: isReady,
+    pending,
     value: val,
     send,
   };

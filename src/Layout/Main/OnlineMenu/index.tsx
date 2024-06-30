@@ -4,8 +4,8 @@ import { WebsocketContext } from "../../../context/WebSocket";
 
 export const OnlineMenu = () => {
   const { send } = useContext(WebsocketContext);
-  const { userId, name } = useContext(LoginStateContext);
-  return (
+  const { userId, name, isLoggedIn } = useContext(LoginStateContext);
+  return isLoggedIn ? (
     <>
       <h1>{name}</h1>
       <div className="menu-buttons">
@@ -27,5 +27,7 @@ export const OnlineMenu = () => {
         </button>
       </div>
     </>
+  ) : (
+    <>Loading...</>
   );
 };
