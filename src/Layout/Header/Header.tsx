@@ -2,7 +2,10 @@ import { useContext, useState } from "react";
 
 import Avatar from "../Avatar";
 
-import AuthModal, { AuthModalMode, ModalState } from "../../components/AuthModal";
+import AuthModal, {
+  AuthModalMode,
+  ModalState,
+} from "../../components/AuthModal";
 
 import "./Header.css";
 
@@ -14,9 +17,8 @@ import {
 
 import "../styles.css";
 
-
 const Header = () => {
-  const { isLoggedIn } = useContext(LoginStateContext);
+  const { isLoggedIn, name, logout } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
 
   const [authModal, setAuthModal] = useState<ModalState>({
@@ -42,6 +44,11 @@ const Header = () => {
     }));
   };
 
+  const goToMenu = () => {
+    if (isLoggedIn && name === "Guest") logout();
+    setAppState(AppState.MENU);
+  };
+
   return (
     <>
       <AuthModal
@@ -51,7 +58,7 @@ const Header = () => {
         switchMode={switchMode}
       />
       <header id="app-header">
-        <h2 className="logo" onClick={() => setAppState(AppState.MENU)}>
+        <h2 className="logo" onClick={goToMenu}>
           PONG
         </h2>
         <div>

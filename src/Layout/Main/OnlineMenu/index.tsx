@@ -8,7 +8,6 @@ export const OnlineMenu = () => {
   return (
     <>
       <h1>{name}</h1>
-      <h2>CHOOSE GAME ROOM</h2>
       <div className="menu-buttons">
         <button className="button" onClick={() => send({ type: "search" })}>
           Search
