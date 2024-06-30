@@ -18,7 +18,7 @@ import {
 
 const initialPendingState: Record<PendingType, boolean> = {
   init: false,
-  room: false,
+  joining: false,
   update: false,
   search: false,
 };
@@ -71,13 +71,16 @@ export const WebsocketProvider = ({ children }: Props) => {
         setVal(msg);
         console.log(msg);
         switch (msg.type) {
-          case "info":
-            if (msg.params.room === "initialized") {
-              updatePending(PendingType.INIT, false);
-            }
+          case "initialized":
+            updatePending(PendingType.INIT, false);
             break;
-          case "connected":
-            // updatePending(PendingType.SEARCH, false);
+          case "joined":
+            setRoomId(msg.params.roomId);
+            // setSecondPlayer(msg.params.otherPlayer.userId); /// TODO: Need to add call to api to download the other user data
+            updatePending(PendingType.JOINING, false);
+            break;
+          case "created":
+            setRoomId(msg.params.roomId);
             break;
           case "error":
             break;
@@ -100,12 +103,19 @@ export const WebsocketProvider = ({ children }: Props) => {
 
     return () => {
       ws.current?.close();
+      setPending(initialPendingState);
+      setVal(null);
+      setRoomId(null);
+      setSecondPlayer(null);
     };
   }, [userId]);
 
   const send = (message: ReqMessage) => {
     if (message.type === "search") {
       updatePending(PendingType.SEARCH, true);
+    }
+    if (message.type === "join") {
+      updatePending(PendingType.JOINING, true);
     }
     ws.current?.send.call(ws.current, JSON.stringify(message));
   };

@@ -1,6 +1,6 @@
 export enum PendingType {
   INIT = "init",
-  ROOM = "room",
+  JOINING = "joining",
   SEARCH = "search",
   UPDATE = "update",
 }
@@ -21,14 +21,18 @@ export interface IWebsocketContext {
   send: (message: ReqMessage) => void;
 }
 
-interface InfoMsg {
-  type: "info";
-  params: { room: "left" | "initialized" };
+interface InitMsgResp {
+  type: "initialized";
 }
 
-interface ConnectedMsg {
-  type: "connected";
-  params: { room: string; userIds: number };
+interface JoinedMsg {
+  type: "joined";
+  params: { roomId: string; otherPlayer: { userId: string | null } };
+}
+
+interface CreatedMsg {
+  type: "created";
+  params: { roomId: string };
 }
 
 interface ErrorMsg {
@@ -36,7 +40,7 @@ interface ErrorMsg {
   params: { room: string };
 }
 
-export type RespMessage = ConnectedMsg | ErrorMsg | InfoMsg;
+export type RespMessage = JoinedMsg | ErrorMsg | InitMsgResp | CreatedMsg;
 
 interface BasicMessage {
   type: "leave" | "search" | "create";
