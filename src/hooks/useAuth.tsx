@@ -46,7 +46,12 @@ export const useAuth = () => {
     } else {
       clearTimeout(logoutTimer);
     }
-  }, [token, expirationDate, logout]);
+    return () => {
+      if (name === "Guest") {
+        logout();
+      }
+    };
+  }, [name, token, expirationDate, logout]);
 
   useEffect(() => {
     const userData = window.localStorage.getItem("userData");

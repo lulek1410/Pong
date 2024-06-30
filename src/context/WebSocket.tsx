@@ -6,11 +6,28 @@ import {
   useRef,
   useState,
 } from "react";
+
 import { LoginStateContext } from "./State";
-import { RespMessage, IWebsocketContext, ReqMessage } from "./message.types";
+import {
+  RespMessage,
+  IWebsocketContext,
+  ReqMessage,
+  PendingType,
+  Player,
+} from "./message.types";
+
+const initialPendingState: Record<PendingType, boolean> = {
+  init: false,
+  room: false,
+  update: false,
+  search: false,
+};
 
 export const WebsocketContext = createContext<IWebsocketContext>({
   ready: false,
+  pending: initialPendingState,
+  secondPlayer: null,
+  roomId: null,
   value: null,
   send: (message: ReqMessage) => {
     throw new Error(`Function not implemented with message: ${message}`);
@@ -21,22 +38,12 @@ type Props = {
   children: ReactNode;
 };
 
-enum PendingType {
-  INIT = "init",
-  ROOM = "room",
-  UPDATE = "update",
-}
-
-const initialPendingState: Record<PendingType, boolean> = {
-  init: false,
-  room: false,
-  update: false,
-};
-
 export const WebsocketProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const [pending, setPending] = useState(initialPendingState);
   const [val, setVal] = useState<RespMessage | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
 
   const { userId } = useContext(LoginStateContext);
   const ws = useRef<WebSocket | null>(null);
@@ -65,10 +72,12 @@ export const WebsocketProvider = ({ children }: Props) => {
         console.log(msg);
         switch (msg.type) {
           case "info":
-            if (msg.params.room === "initialized")
+            if (msg.params.room === "initialized") {
               updatePending(PendingType.INIT, false);
+            }
             break;
           case "connected":
+            // updatePending(PendingType.SEARCH, false);
             break;
           case "error":
             break;
@@ -95,12 +104,17 @@ export const WebsocketProvider = ({ children }: Props) => {
   }, [userId]);
 
   const send = (message: ReqMessage) => {
+    if (message.type === "search") {
+      updatePending(PendingType.SEARCH, true);
+    }
     ws.current?.send.call(ws.current, JSON.stringify(message));
   };
 
   const ret = {
     ready: isReady,
     pending,
+    secondPlayer,
+    roomId,
     value: val,
     send,
   };

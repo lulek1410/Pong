@@ -1,5 +1,22 @@
+export enum PendingType {
+  INIT = "init",
+  ROOM = "room",
+  SEARCH = "search",
+  UPDATE = "update",
+}
+
+type IPending = Record<PendingType, boolean>;
+
+export interface Player {
+  userId: string;
+  name: string;
+}
+
 export interface IWebsocketContext {
   ready: boolean;
+  pending: IPending;
+  secondPlayer: Player | null;
+  roomId: string | null;
   value: RespMessage | null;
   send: (message: ReqMessage) => void;
 }
