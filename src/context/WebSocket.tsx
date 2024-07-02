@@ -29,6 +29,7 @@ export const WebsocketContext = createContext<IWebsocketContext>({
   secondPlayer: null,
   roomId: null,
   value: null,
+  error: null,
   send: (message: ReqMessage) => {
     throw new Error(`Function not implemented with message: ${message}`);
   },
@@ -44,12 +45,19 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [val, setVal] = useState<RespMessage | null>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const { userId } = useContext(LoginStateContext);
   const ws = useRef<WebSocket | null>(null);
 
-  const updatePending = (type: PendingType, isPending: boolean) => {
-    setPending((prevState) => ({ ...prevState, [type]: isPending }));
+  const updatePending = (types: PendingType[], isPending: boolean) => {
+    setPending((prevState) => {
+      const updatedState = { ...prevState };
+      types.forEach((type: PendingType) => {
+        updatedState[type] = isPending;
+      });
+      return updatedState;
+    });
   };
 
   useEffect(() => {
@@ -62,7 +70,7 @@ export const WebsocketProvider = ({ children }: Props) => {
           params: { userId: userId },
         };
         socket.send(JSON.stringify(initMessage));
-        updatePending(PendingType.INIT, true);
+        updatePending([PendingType.INIT], true);
         setIsReady(true);
       };
 
@@ -72,15 +80,23 @@ export const WebsocketProvider = ({ children }: Props) => {
         console.log(msg);
         switch (msg.type) {
           case "initialized":
-            updatePending(PendingType.INIT, false);
+            updatePending([PendingType.INIT], false);
             break;
           case "joined":
             setRoomId(msg.params.roomId);
             // setSecondPlayer(msg.params.otherPlayer.userId); /// TODO: Need to add call to api to download the other user data
-            updatePending(PendingType.JOINING, false);
+            updatePending([PendingType.JOINING, PendingType.SEARCH], false);
             break;
           case "created":
             setRoomId(msg.params.roomId);
+            setPending((prevPending) => {
+              if (prevPending.search) {
+                setError(
+                  "Could not find an empty room. New room has been created."
+                );
+              }
+              return { ...prevPending, search: false };
+            });
             break;
           case "error":
             break;
@@ -95,6 +111,11 @@ export const WebsocketProvider = ({ children }: Props) => {
 
       socket.onclose = (event) => {
         setIsReady(false);
+        setPending(initialPendingState);
+        setVal(null);
+        setRoomId(null);
+        setSecondPlayer(null);
+        setError(null);
         console.log("WebSocket connection closed:", event);
       };
 
@@ -102,20 +123,19 @@ export const WebsocketProvider = ({ children }: Props) => {
     }
 
     return () => {
-      ws.current?.close();
-      setPending(initialPendingState);
-      setVal(null);
-      setRoomId(null);
-      setSecondPlayer(null);
+      if (ws.current) {
+        ws.current?.send(JSON.stringify({ type: "leave" }));
+        ws.current?.close();
+      }
     };
   }, [userId]);
 
   const send = (message: ReqMessage) => {
     if (message.type === "search") {
-      updatePending(PendingType.SEARCH, true);
+      updatePending([PendingType.SEARCH], true);
     }
     if (message.type === "join") {
-      updatePending(PendingType.JOINING, true);
+      updatePending([PendingType.JOINING], true);
     }
     ws.current?.send.call(ws.current, JSON.stringify(message));
   };
@@ -126,6 +146,7 @@ export const WebsocketProvider = ({ children }: Props) => {
     secondPlayer,
     roomId,
     value: val,
+    error,
     send,
   };
 

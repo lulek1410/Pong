@@ -18,6 +18,7 @@ export interface IWebsocketContext {
   secondPlayer: Player | null;
   roomId: string | null;
   value: RespMessage | null;
+  error: string | null;
   send: (message: ReqMessage) => void;
 }
 
