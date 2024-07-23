@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import JoinRoomModal from "./JoinRoomModal";
 
@@ -15,8 +15,16 @@ export const OnlineMenu = () => {
   const { send } = useContext(WebsocketContext);
   const { userId, name, isLoggedIn } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
+  const { roomId } = useContext(WebsocketContext);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (roomId) {
+      closeModal();
+      setAppState(AppState.LOBBY);
+    }
+  }, [roomId]);
 
   const sendMsg = (msg: ReqMessage) => {
     send(msg);

@@ -37,7 +37,7 @@ interface CreatedMsg {
 }
 
 interface ErrorMsg {
-  type: "full" | "error";
+  type: "error";
   params: { error: string };
 }
 

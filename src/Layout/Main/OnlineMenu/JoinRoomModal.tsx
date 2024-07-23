@@ -39,7 +39,7 @@ const JoinRoomModal = ({ isOpen, closeModal }: Props) => {
       classNames="join-room-modal-container"
     >
       {pending.joining && <Loader />}
-      <div className="inputs-container ">
+      <div className="inputs-container">
         <input
           className={`input ${
             !formState.roomId.isValid ? "invalid" : null
@@ -53,7 +53,7 @@ const JoinRoomModal = ({ isOpen, closeModal }: Props) => {
           placeholder="Room id"
         />
       </div>
-      <p>{error}</p>
+      <p className="error">{error}</p>
       {userId && (
         <button
           type="submit"

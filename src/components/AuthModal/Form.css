@@ -13,3 +13,9 @@
 .invalid {
   background-color: rgb(95, 0, 0);
 }
+
+.error {
+  padding-bottom: 6px;
+  font-size: 14px;
+  color: rgb(100, 0, 0);
+}

@@ -99,8 +99,8 @@ export const WebsocketProvider = ({ children }: Props) => {
             });
             break;
           case "error":
-            break;
-          case "full":
+            updatePending([PendingType.JOINING, PendingType.SEARCH], false);
+            setError(msg.params.error);
             break;
         }
       };
@@ -131,6 +131,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   }, [userId]);
 
   const send = (message: ReqMessage) => {
+    setError(null);
     if (message.type === "search") {
       updatePending([PendingType.SEARCH], true);
     }
