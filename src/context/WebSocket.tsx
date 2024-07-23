@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { LoginStateContext } from "./State";
+import { LoginStateContext, User } from "./State";
 import {
   RespMessage,
   IWebsocketContext,
@@ -15,6 +15,7 @@ import {
   PendingType,
   Player,
 } from "./message.types";
+import { useMutation } from "@tanstack/react-query";
 
 const initialPendingState: Record<PendingType, boolean> = {
   init: false,
@@ -47,7 +48,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { userId } = useContext(LoginStateContext);
+  const { id } = useContext(LoginStateContext);
   const ws = useRef<WebSocket | null>(null);
 
   const updatePending = (types: PendingType[], isPending: boolean) => {
@@ -60,14 +61,36 @@ export const WebsocketProvider = ({ children }: Props) => {
     });
   };
 
+  const getUserAPI = async (id: string) => {
+    setError(null);
+    const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      method: "GET",
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error("Login failed. " + errorData.message);
+    }
+    return response.json();
+  };
+
+  const mutation = useMutation({
+    mutationFn: getUserAPI,
+    onSuccess: (user: User) => {
+      setSecondPlayer(user);
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
+
   useEffect(() => {
-    if (userId) {
+    if (id) {
       const socket = new WebSocket("ws://localhost:5000");
 
       socket.onopen = () => {
         const initMessage = {
           type: "init",
-          params: { userId: userId },
+          params: { id: id },
         };
         socket.send(JSON.stringify(initMessage));
         updatePending([PendingType.INIT], true);
@@ -77,14 +100,14 @@ export const WebsocketProvider = ({ children }: Props) => {
       socket.onmessage = (event: MessageEvent<RespMessage>) => {
         const msg: RespMessage = JSON.parse(event.data.toString());
         setVal(msg);
-        console.log(msg);
         switch (msg.type) {
           case "initialized":
             updatePending([PendingType.INIT], false);
             break;
           case "joined":
             setRoomId(msg.params.roomId);
-            // setSecondPlayer(msg.params.otherPlayer.userId); /// TODO: Need to add call to api to download the other user data
+            const otherPlayerId = msg.params.otherPlayer.id;
+            if (otherPlayerId) mutation.mutate(otherPlayerId);
             updatePending([PendingType.JOINING, PendingType.SEARCH], false);
             break;
           case "created":
@@ -116,7 +139,6 @@ export const WebsocketProvider = ({ children }: Props) => {
         setRoomId(null);
         setSecondPlayer(null);
         setError(null);
-        console.log("WebSocket connection closed:", event);
       };
 
       ws.current = socket;
@@ -128,7 +150,7 @@ export const WebsocketProvider = ({ children }: Props) => {
         ws.current?.close();
       }
     };
-  }, [userId]);
+  }, [id]);
 
   const send = (message: ReqMessage) => {
     setError(null);
