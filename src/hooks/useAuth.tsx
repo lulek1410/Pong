@@ -9,14 +9,14 @@ export interface UserData {
 }
 
 export const useAuth = () => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const [id, setUserId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [expirationDate, setExpirationDate] = useState<Date | null>(null);
 
   const login = useCallback((user: User, expirationDate?: Date) => {
-    setUserId(user.userId);
+    setUserId(user.id);
     setEmail(user.email);
     setName(user.name);
     setToken(user.token);
@@ -63,5 +63,5 @@ export const useAuth = () => {
     }
   }, [login]);
 
-  return { login, logout, token, userId, email, name };
+  return { login, logout, token, id, email, name };
 };

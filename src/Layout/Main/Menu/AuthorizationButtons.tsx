@@ -60,7 +60,7 @@ const AuthorizationButtons = () => {
         className="button"
         onClick={() => {
           login({
-            userId: v4(),
+            id: v4(),
             name: "Guest",
             email: "",
             token: "GuestToken",

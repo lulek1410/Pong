@@ -22,7 +22,7 @@ export const AppStateContext = createContext<AppStateType>({
 });
 
 export interface User {
-  userId: string;
+  id: string;
   name: string;
   email: string;
   token: string;
@@ -36,7 +36,7 @@ type LoginStateType = { [P in keyof User]: User[P] | null } & {
 
 export const LoginStateContext = createContext<LoginStateType>({
   isLoggedIn: false,
-  userId: null,
+  id: null,
   name: null,
   email: null,
   token: null,
@@ -54,7 +54,7 @@ type Props = {
 
 export const StateProvider = ({ children }: Props) => {
   const [appState, setAppState] = useState<AppState>(AppState.MENU);
-  const { userId, email, name, token, login, logout } = useAuth();
+  const { id, email, name, token, login, logout } = useAuth();
 
   const logoutWrapped = () => {
     setAppState(AppState.MENU);
@@ -65,7 +65,7 @@ export const StateProvider = ({ children }: Props) => {
     <LoginStateContext.Provider
       value={{
         isLoggedIn: !!token,
-        userId,
+        id,
         name,
         email,
         token,

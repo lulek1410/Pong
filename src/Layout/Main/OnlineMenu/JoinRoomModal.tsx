@@ -25,7 +25,7 @@ const JoinRoomModal = ({ isOpen, closeModal }: Props) => {
     roomId: { value: "", isValid: true },
   };
   const { send, error, pending } = useContext(WebsocketContext);
-  const { userId } = useContext(LoginStateContext);
+  const { id } = useContext(LoginStateContext);
   const { formState, updateInput, setFormData } = useForm(initialFormState);
 
   return (
@@ -54,7 +54,7 @@ const JoinRoomModal = ({ isOpen, closeModal }: Props) => {
         />
       </div>
       <p className="error">{error}</p>
-      {userId && (
+      {id && (
         <button
           type="submit"
           className="button"
@@ -62,7 +62,7 @@ const JoinRoomModal = ({ isOpen, closeModal }: Props) => {
             e.preventDefault();
             send({
               type: "join",
-              params: { code: formState.roomId.value, userId },
+              params: { code: formState.roomId.value, id },
             });
           }}
           disabled={!formState.roomId.value}

@@ -8,7 +8,7 @@ export enum PendingType {
 type IPending = Record<PendingType, boolean>;
 
 export interface Player {
-  userId: string;
+  id: string;
   name: string;
 }
 
@@ -28,7 +28,7 @@ interface InitMsgResp {
 
 interface JoinedMsg {
   type: "joined";
-  params: { roomId: string; otherPlayer: { userId: string | null } };
+  params: { roomId: string; otherPlayer: { id: string | null } };
 }
 
 interface CreatedMsg {
@@ -49,7 +49,7 @@ interface BasicMessage {
 
 interface JoinParams {
   code: string;
-  userId: string;
+  id: string;
 }
 
 interface JoinMessage {
@@ -59,7 +59,7 @@ interface JoinMessage {
 
 interface InitMessage {
   type: "init";
-  params: { userId: string };
+  params: { id: string };
 }
 
 export type ReqMessage = JoinMessage | BasicMessage | InitMessage;

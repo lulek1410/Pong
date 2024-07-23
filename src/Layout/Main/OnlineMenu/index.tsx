@@ -13,7 +13,7 @@ import { ReqMessage } from "../../../context/message.types";
 
 export const OnlineMenu = () => {
   const { send } = useContext(WebsocketContext);
-  const { userId, name, isLoggedIn } = useContext(LoginStateContext);
+  const { id, name, isLoggedIn } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
   const { roomId } = useContext(WebsocketContext);
 
@@ -46,7 +46,7 @@ export const OnlineMenu = () => {
         <button
           className="button"
           onClick={() => {
-            if (userId) {
+            if (id) {
               setIsOpen(true);
             }
           }}
