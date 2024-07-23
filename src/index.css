@@ -51,6 +51,11 @@ a:hover {
   background-color: rgb(155, 155, 155);
 }
 
+.button:disabled {
+  background-color: rgb(120, 120, 120);
+  border-color: rgb(155, 155, 155);
+}
+
 .logo {
   cursor: pointer;
 }

@@ -38,7 +38,7 @@ interface CreatedMsg {
 
 interface ErrorMsg {
   type: "full" | "error";
-  params: { room: string };
+  params: { error: string };
 }
 
 export type RespMessage = JoinedMsg | ErrorMsg | InitMsgResp | CreatedMsg;
