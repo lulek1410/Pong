@@ -107,7 +107,12 @@ export const WebsocketProvider = ({ children }: Props) => {
 
   const handleClose = () => {
     setIsReady(false);
+    handleLeave();
+  };
+
+  const handleLeave = () => {
     setPending(initialPendingState);
+    setIsHost(false);
     setVal(null);
     setRoomId(null);
     setSecondPlayer(null);
@@ -182,9 +187,9 @@ export const WebsocketProvider = ({ children }: Props) => {
 
   const send = (message: ReqMessage) => {
     setError(null);
-    // if (message.type === "leave") {
-    //   setIsHost(false);
-    // }
+    if (message.type === "leave") {
+      handleLeave();
+    }
     if (message.type === "search") {
       updatePending([PendingType.SEARCH], true);
     }

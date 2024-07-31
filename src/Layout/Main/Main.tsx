@@ -16,14 +16,19 @@ import useLocalGameLogic from "../../hooks/useLocalGameLogic";
 import { useOnlineGameLogic } from "../../hooks/useOnlineGameLogic";
 
 import "./Main.css";
+import { WebsocketContext } from "../../context/WebSocket";
 
 const Main = () => {
   const { appState } = useContext(AppStateContext);
   const { name, logout } = useContext(LoginStateContext);
+  const { send } = useContext(WebsocketContext);
 
   useEffect(() => {
-    if (name === "Guest" && appState === AppState.MENU) {
-      logout();
+    if (appState === AppState.MENU) {
+      send({ type: "leave" });
+      if (name === "Guest") {
+        logout();
+      }
     }
   }, [name, appState, logout]);
 
