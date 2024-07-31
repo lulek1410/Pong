@@ -17,49 +17,59 @@ export interface IWebsocketContext {
   pending: IPending;
   secondPlayer: Player | null;
   roomId: string | null;
-  value: RespMessage | null;
+  value: RespMsg | null;
   error: string | null;
   send: (message: ReqMessage) => void;
 }
 
-interface InitMsgResp {
+export interface InitMsgResp {
   type: "initialized";
 }
 
-interface JoinedMsg {
+export interface JoinedMsg {
   type: "joined";
   params: { roomId: string; otherPlayer: { id: string | null } };
 }
 
-interface CreatedMsg {
+export interface OtherPlayerJoinedMsg {
+  type: "otherPlayerJoined";
+  params: { player: { id: string | null } };
+}
+
+export interface CreatedMsg {
   type: "created";
   params: { roomId: string };
 }
 
-interface ErrorMsg {
+export interface ErrorMsg {
   type: "error";
   params: { error: string };
 }
 
-export type RespMessage = JoinedMsg | ErrorMsg | InitMsgResp | CreatedMsg;
+export type RespMsg =
+  | JoinedMsg
+  | ErrorMsg
+  | InitMsgResp
+  | CreatedMsg
+  | OtherPlayerJoinedMsg;
 
-interface BasicMessage {
+export interface BasicMsg {
   type: "leave" | "search" | "create";
 }
 
-interface JoinParams {
+export interface JoinParams {
   code: string;
   id: string;
 }
 
-interface JoinMessage {
+export interface JoinMsg {
   type: "join";
   params: JoinParams;
 }
 
-interface InitMessage {
+export interface InitMsg {
   type: "init";
   params: { id: string };
 }
 
-export type ReqMessage = JoinMessage | BasicMessage | InitMessage;
+export type ReqMessage = JoinMsg | BasicMsg | InitMsg;

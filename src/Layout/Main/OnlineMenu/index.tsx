@@ -9,7 +9,7 @@ import {
 } from "../../../context/State";
 import { WebsocketContext } from "../../../context/WebSocket";
 
-import { ReqMessage } from "../../../context/message.types";
+import { ReqMessage } from "../../../context/WebSocket/message.types";
 
 export const OnlineMenu = () => {
   const { send } = useContext(WebsocketContext);

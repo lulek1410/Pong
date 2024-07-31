@@ -7,13 +7,15 @@ import {
   useState,
 } from "react";
 
-import { LoginStateContext, User } from "./State";
+import { LoginStateContext, User } from "../State";
 import {
-  RespMessage,
+  RespMsg,
   IWebsocketContext,
   ReqMessage,
   PendingType,
   Player,
+  JoinedMsg,
+  CreatedMsg,
 } from "./message.types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -43,7 +45,7 @@ type Props = {
 export const WebsocketProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const [pending, setPending] = useState(initialPendingState);
-  const [val, setVal] = useState<RespMessage | null>(null);
+  const [val, setVal] = useState<RespMsg | null>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -83,43 +85,66 @@ export const WebsocketProvider = ({ children }: Props) => {
     },
   });
 
+  const handleJoinedMsg = (msg: JoinedMsg) => {
+    setRoomId(msg.params.roomId);
+    const otherPlayerId = msg.params.otherPlayer.id;
+    if (otherPlayerId) mutation.mutate(otherPlayerId);
+    updatePending([PendingType.JOINING, PendingType.SEARCH], false);
+  };
+
+  const handleCreatedMsg = (msg: CreatedMsg) => {
+    setRoomId(msg.params.roomId);
+    setPending((prevPending) => {
+      if (prevPending.search) {
+        setError("Could not find an empty room. New room has been created.");
+      }
+      return { ...prevPending, search: false };
+    });
+  };
+
+  const handleClose = () => {
+    setIsReady(false);
+    setPending(initialPendingState);
+    setVal(null);
+    setRoomId(null);
+    setSecondPlayer(null);
+    setError(null);
+  };
+
+  const handleOpen = (socket: WebSocket) => {
+    const initMessage = {
+      type: "init",
+      params: { id: id },
+    };
+    socket.send(JSON.stringify(initMessage));
+    updatePending([PendingType.INIT], true);
+    setIsReady(true);
+  };
+
   useEffect(() => {
     if (id) {
       const socket = new WebSocket("ws://localhost:5000");
 
       socket.onopen = () => {
-        const initMessage = {
-          type: "init",
-          params: { id: id },
-        };
-        socket.send(JSON.stringify(initMessage));
-        updatePending([PendingType.INIT], true);
-        setIsReady(true);
+        handleOpen(socket);
       };
 
-      socket.onmessage = (event: MessageEvent<RespMessage>) => {
-        const msg: RespMessage = JSON.parse(event.data.toString());
+      socket.onmessage = (event: MessageEvent<RespMsg>) => {
+        const msg: RespMsg = JSON.parse(event.data.toString());
         setVal(msg);
         switch (msg.type) {
           case "initialized":
             updatePending([PendingType.INIT], false);
             break;
+          case "otherPlayerJoined":
+            const playerId = msg.params.player.id;
+            if (playerId) mutation.mutate(playerId);
+            break;
           case "joined":
-            setRoomId(msg.params.roomId);
-            const otherPlayerId = msg.params.otherPlayer.id;
-            if (otherPlayerId) mutation.mutate(otherPlayerId);
-            updatePending([PendingType.JOINING, PendingType.SEARCH], false);
+            handleJoinedMsg(msg);
             break;
           case "created":
-            setRoomId(msg.params.roomId);
-            setPending((prevPending) => {
-              if (prevPending.search) {
-                setError(
-                  "Could not find an empty room. New room has been created."
-                );
-              }
-              return { ...prevPending, search: false };
-            });
+            handleCreatedMsg(msg);
             break;
           case "error":
             updatePending([PendingType.JOINING, PendingType.SEARCH], false);
@@ -132,13 +157,8 @@ export const WebsocketProvider = ({ children }: Props) => {
         console.error("WebSocket error:", error);
       };
 
-      socket.onclose = (event) => {
-        setIsReady(false);
-        setPending(initialPendingState);
-        setVal(null);
-        setRoomId(null);
-        setSecondPlayer(null);
-        setError(null);
+      socket.onclose = () => {
+        handleClose();
       };
 
       ws.current = socket;
