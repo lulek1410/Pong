@@ -33,6 +33,7 @@ export const WebsocketContext = createContext<IWebsocketContext>({
   roomId: null,
   value: null,
   error: null,
+  isHost: false,
   send: (message: ReqMessage) => {
     throw new Error(`Function not implemented with message: ${message}`);
   },
@@ -45,6 +46,7 @@ type Props = {
 export const WebsocketProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const [pending, setPending] = useState(initialPendingState);
+  const [isHost, setIsHost] = useState(false);
   const [val, setVal] = useState<RespMsg | null>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
@@ -93,6 +95,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   };
 
   const handleCreatedMsg = (msg: CreatedMsg) => {
+    setIsHost(true);
     setRoomId(msg.params.roomId);
     setPending((prevPending) => {
       if (prevPending.search) {
@@ -132,6 +135,7 @@ export const WebsocketProvider = ({ children }: Props) => {
       socket.onmessage = (event: MessageEvent<RespMsg>) => {
         const msg: RespMsg = JSON.parse(event.data.toString());
         setVal(msg);
+        console.log(msg);
         switch (msg.type) {
           case "initialized":
             updatePending([PendingType.INIT], false);
@@ -139,6 +143,10 @@ export const WebsocketProvider = ({ children }: Props) => {
           case "otherPlayerJoined":
             const playerId = msg.params.player.id;
             if (playerId) mutation.mutate(playerId);
+            break;
+          case "otherPlayerLeft":
+            setSecondPlayer(null);
+            setIsHost(true);
             break;
           case "joined":
             handleJoinedMsg(msg);
@@ -174,6 +182,9 @@ export const WebsocketProvider = ({ children }: Props) => {
 
   const send = (message: ReqMessage) => {
     setError(null);
+    // if (message.type === "leave") {
+    //   setIsHost(false);
+    // }
     if (message.type === "search") {
       updatePending([PendingType.SEARCH], true);
     }
@@ -186,6 +197,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const ret = {
     ready: isReady,
     pending,
+    isHost,
     secondPlayer,
     roomId,
     value: val,

@@ -19,6 +19,7 @@ export interface IWebsocketContext {
   roomId: string | null;
   value: RespMsg | null;
   error: string | null;
+  isHost: boolean;
   send: (message: ReqMessage) => void;
 }
 
@@ -46,12 +47,22 @@ export interface ErrorMsg {
   params: { error: string };
 }
 
+export interface OtherPlayerLeftMsg {
+  type: "otherPlayerLeft";
+}
+
+export interface ErrorMsg {
+  type: "error";
+  params: { error: string };
+}
+
 export type RespMsg =
   | JoinedMsg
   | ErrorMsg
   | InitMsgResp
   | CreatedMsg
-  | OtherPlayerJoinedMsg;
+  | OtherPlayerJoinedMsg
+  | OtherPlayerLeftMsg;
 
 export interface BasicMsg {
   type: "leave" | "search" | "create";

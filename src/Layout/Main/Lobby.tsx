@@ -9,7 +9,8 @@ import "./Lobby.css";
 
 const Lobby = () => {
   const { name } = useContext(LoginStateContext);
-  const { secondPlayer, pending, error, roomId } = useContext(WebsocketContext);
+  const { secondPlayer, pending, error, roomId, isHost } =
+    useContext(WebsocketContext);
 
   const message = pending.search ? "SEARCHING FOR A ROOM" : `ROOM: ${roomId}`;
 
@@ -17,8 +18,12 @@ const Lobby = () => {
     <>
       <p className={error ? "lobby-header-error" : ""}>{error}</p>
       <h4>{message}</h4>
-      <UserCard name={name} isActive />
-      <UserCard name={secondPlayer?.name || null} isLoading={pending.search} />
+      <UserCard name={name} isActive isHost={isHost} />
+      <UserCard
+        name={secondPlayer?.name || null}
+        isLoading={pending.search}
+        isHost={!isHost}
+      />
     </>
   );
 };
