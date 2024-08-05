@@ -25,8 +25,8 @@ export interface IWebsocketContext {
   send: (message: ReqMessage) => void;
 }
 
-export interface InitMsgResp {
-  type: "initialized";
+export interface BaseRespMsg {
+  type: "gameStarting" | "initialized" | "otherPlayerLeft";
 }
 
 export interface JoinedMsg {
@@ -49,10 +49,6 @@ export interface ErrorMsg {
   params: { error: string };
 }
 
-export interface OtherPlayerLeftMsg {
-  type: "otherPlayerLeft";
-}
-
 export interface ErrorMsg {
   type: "error";
   params: { error: string };
@@ -66,10 +62,9 @@ export interface CountdownMsg {
 export type RespMsg =
   | JoinedMsg
   | ErrorMsg
-  | InitMsgResp
   | CreatedMsg
   | OtherPlayerJoinedMsg
-  | OtherPlayerLeftMsg
+  | BaseRespMsg
   | CountdownMsg;
 
 export interface BasicMsg {

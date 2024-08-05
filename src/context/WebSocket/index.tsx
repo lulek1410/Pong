@@ -144,6 +144,10 @@ export const WebsocketProvider = ({ children }: Props) => {
     }
   };
 
+  const handleGameStarting = () => {
+    updatePending([PendingType.COUNTDOWN], true);
+  };
+
   useEffect(() => {
     if (id) {
       const socket = new WebSocket("ws://localhost:5000");
@@ -180,6 +184,10 @@ export const WebsocketProvider = ({ children }: Props) => {
             break;
           case "countdown":
             handleCountdown(msg);
+            break;
+          case "gameStarting":
+            handleGameStarting();
+            break;
         }
       };
 
