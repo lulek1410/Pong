@@ -2,3 +2,15 @@
   color: rgb(125, 125, 125);
   font-size: 14px;
 }
+
+.lobby-back-button {
+  margin-right: auto;
+}
+
+.lobby-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
