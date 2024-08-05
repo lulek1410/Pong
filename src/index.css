@@ -54,6 +54,7 @@ a:hover {
 .button:disabled {
   background-color: rgb(120, 120, 120);
   border-color: rgb(155, 155, 155);
+  cursor: auto;
 }
 
 .logo {

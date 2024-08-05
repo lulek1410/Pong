@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { LoginStateContext, User } from "../State";
+import { AppState, AppStateContext, LoginStateContext, User } from "../State";
 import {
   RespMsg,
   IWebsocketContext,
@@ -16,6 +16,7 @@ import {
   Player,
   JoinedMsg,
   CreatedMsg,
+  CountdownMsg,
 } from "./message.types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -24,6 +25,7 @@ const initialPendingState: Record<PendingType, boolean> = {
   joining: false,
   update: false,
   search: false,
+  countdown: false,
 };
 
 export const WebsocketContext = createContext<IWebsocketContext>({
@@ -34,6 +36,7 @@ export const WebsocketContext = createContext<IWebsocketContext>({
   value: null,
   error: null,
   isHost: false,
+  countdownValue: null,
   send: (message: ReqMessage) => {
     throw new Error(`Function not implemented with message: ${message}`);
   },
@@ -51,8 +54,10 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [countdownValue, setCountdownValue] = useState<number | null>(null);
 
   const { id } = useContext(LoginStateContext);
+  const { setAppState } = useContext(AppStateContext);
   const ws = useRef<WebSocket | null>(null);
 
   const updatePending = (types: PendingType[], isPending: boolean) => {
@@ -129,6 +134,16 @@ export const WebsocketProvider = ({ children }: Props) => {
     setIsReady(true);
   };
 
+  const handleCountdown = (msg: CountdownMsg) => {
+    if (msg.params.count === 0) {
+      updatePending([PendingType.COUNTDOWN], false);
+      setAppState(AppState.ONLINE);
+      setCountdownValue(null);
+    } else {
+      setCountdownValue(msg.params.count);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       const socket = new WebSocket("ws://localhost:5000");
@@ -163,6 +178,8 @@ export const WebsocketProvider = ({ children }: Props) => {
             updatePending([PendingType.JOINING, PendingType.SEARCH], false);
             setError(msg.params.error);
             break;
+          case "countdown":
+            handleCountdown(msg);
         }
       };
 
@@ -196,6 +213,9 @@ export const WebsocketProvider = ({ children }: Props) => {
     if (message.type === "join") {
       updatePending([PendingType.JOINING], true);
     }
+    if (message.type === "startGame") {
+      updatePending([PendingType.COUNTDOWN], true);
+    }
     ws.current?.send.call(ws.current, JSON.stringify(message));
   };
 
@@ -207,6 +227,7 @@ export const WebsocketProvider = ({ children }: Props) => {
     roomId,
     value: val,
     error,
+    countdownValue,
     send,
   };
 

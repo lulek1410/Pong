@@ -3,6 +3,7 @@ export enum PendingType {
   JOINING = "joining",
   SEARCH = "search",
   UPDATE = "update",
+  COUNTDOWN = "countdown",
 }
 
 type IPending = Record<PendingType, boolean>;
@@ -19,6 +20,7 @@ export interface IWebsocketContext {
   roomId: string | null;
   value: RespMsg | null;
   error: string | null;
+  countdownValue: number | null;
   isHost: boolean;
   send: (message: ReqMessage) => void;
 }
@@ -56,16 +58,22 @@ export interface ErrorMsg {
   params: { error: string };
 }
 
+export interface CountdownMsg {
+  type: "countdown";
+  params: { count: number };
+}
+
 export type RespMsg =
   | JoinedMsg
   | ErrorMsg
   | InitMsgResp
   | CreatedMsg
   | OtherPlayerJoinedMsg
-  | OtherPlayerLeftMsg;
+  | OtherPlayerLeftMsg
+  | CountdownMsg;
 
 export interface BasicMsg {
-  type: "leave" | "search" | "create";
+  type: "leave" | "search" | "create" | "startGame";
 }
 
 export interface JoinParams {
