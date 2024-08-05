@@ -145,6 +145,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   };
 
   const handleGameStarting = () => {
+    setAppState(AppState.ONLINE);
     updatePending([PendingType.COUNTDOWN], true);
   };
 
@@ -222,6 +223,7 @@ export const WebsocketProvider = ({ children }: Props) => {
       updatePending([PendingType.JOINING], true);
     }
     if (message.type === "startGame") {
+      setAppState(AppState.ONLINE);
       updatePending([PendingType.COUNTDOWN], true);
     }
     ws.current?.send.call(ws.current, JSON.stringify(message));

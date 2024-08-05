@@ -15,7 +15,7 @@ import Loader from "../../components/Loader";
 
 const Lobby = () => {
   const { name } = useContext(LoginStateContext);
-  const { secondPlayer, pending, error, roomId, isHost, countdownValue, send } =
+  const { secondPlayer, pending, error, roomId, isHost, send } =
     useContext(WebsocketContext);
   const { setAppState } = useContext(AppStateContext);
 
@@ -36,33 +36,24 @@ const Lobby = () => {
 
   return (
     <div className="lobby-container">
-      {pending.countdown && !!countdownValue ? (
-        <>
-          <p>{countdownValue}</p>
-          <Loader />
-        </>
-      ) : (
-        <>
-          <div className="lobby-back-button">
-            {!pending.search && <BackButton action={leaveRoom} />}
-          </div>
-          <p className={error ? "lobby-header-error" : ""}>{error}</p>
-          <h4>{message}</h4>
-          <UserCard name={name} isActive isHost={isHost} />
-          <UserCard
-            name={secondPlayer?.name || null}
-            isLoading={pending.search}
-            isHost={!isHost}
-          />
-          <button
-            className="button"
-            disabled={!secondPlayer?.name}
-            onClick={startGame}
-          >
-            START GAME
-          </button>
-        </>
-      )}
+      <div className="lobby-back-button">
+        {!pending.search && <BackButton action={leaveRoom} />}
+      </div>
+      <p className={error ? "lobby-header-error" : ""}>{error}</p>
+      <h4>{message}</h4>
+      <UserCard name={name} isActive isHost={isHost} />
+      <UserCard
+        name={secondPlayer?.name || null}
+        isLoading={pending.search}
+        isHost={!isHost}
+      />
+      <button
+        className="button"
+        disabled={!secondPlayer?.name}
+        onClick={startGame}
+      >
+        START GAME
+      </button>
     </div>
   );
 };

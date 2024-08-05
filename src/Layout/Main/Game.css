@@ -67,4 +67,13 @@
 
 .score {
   pointer-events: none;
+  height: 50px;
+}
+
+.loader-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 50px;
+  pointer-events: none;
 }

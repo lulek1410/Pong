@@ -1,6 +1,8 @@
-import { RefObject } from "react";
+import { RefObject, useContext } from "react";
 
 import "./Game.css";
+import { WebsocketContext } from "../../context/WebSocket";
+import Loader from "../../components/Loader";
 
 export interface Points {
   player1: number;
@@ -29,6 +31,7 @@ interface Props {
 }
 
 const Game = ({ useGameLogic }: Props) => {
+  const { pending, countdownValue } = useContext(WebsocketContext);
   const {
     points,
     player1Offset,
@@ -43,9 +46,16 @@ const Game = ({ useGameLogic }: Props) => {
 
   return (
     <>
-      <h1 className="score">
-        {points.player1} : {points.player2}
-      </h1>
+      {pending.countdown && !!countdownValue ? (
+        <div className="loader-container">
+          <p>{countdownValue}</p>
+          <Loader />
+        </div>
+      ) : (
+        <h1 className="score">
+          {points.player1} : {points.player2}
+        </h1>
+      )}
       <div ref={gameBoardRef} id="game-board">
         <div
           style={{
