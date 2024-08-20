@@ -17,6 +17,7 @@ import {
   JoinedMsg,
   CreatedMsg,
   CountdownMsg,
+  InitMsg,
 } from "./message.types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -56,7 +57,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [countdownValue, setCountdownValue] = useState<number | null>(null);
 
-  const { id } = useContext(LoginStateContext);
+  const { id, name } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
   const ws = useRef<WebSocket | null>(null);
 
@@ -85,7 +86,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const mutation = useMutation({
     mutationFn: getUserAPI,
     onSuccess: (user: User) => {
-      setSecondPlayer(user);
+      setSecondPlayer({ id: user.id, name: user.name, isGuest: false });
     },
     onError: (error: Error) => {
       setError(error.message);
@@ -94,8 +95,10 @@ export const WebsocketProvider = ({ children }: Props) => {
 
   const handleJoinedMsg = (msg: JoinedMsg) => {
     setRoomId(msg.params.roomId);
-    const otherPlayerId = msg.params.otherPlayer.id;
-    if (otherPlayerId) mutation.mutate(otherPlayerId);
+    const otherPlayer = msg.params.otherPlayer;
+    if (otherPlayer?.isGuest)
+      setSecondPlayer({ id: otherPlayer.id, name: "Guest", isGuest: true });
+    if (otherPlayer && !otherPlayer.isGuest) mutation.mutate(otherPlayer.id);
     updatePending([PendingType.JOINING, PendingType.SEARCH], false);
   };
 
@@ -125,9 +128,9 @@ export const WebsocketProvider = ({ children }: Props) => {
   };
 
   const handleOpen = (socket: WebSocket) => {
-    const initMessage = {
+    const initMessage: InitMsg = {
       type: "init",
-      params: { id: id },
+      params: { id: id!, isGuest: name === "Guest" },
     };
     socket.send(JSON.stringify(initMessage));
     updatePending([PendingType.INIT], true);
@@ -166,8 +169,10 @@ export const WebsocketProvider = ({ children }: Props) => {
             updatePending([PendingType.INIT], false);
             break;
           case "otherPlayerJoined":
-            const playerId = msg.params.player.id;
-            if (playerId) mutation.mutate(playerId);
+            const { id, isGuest } = msg.params.player;
+            if (id && !isGuest) mutation.mutate(id);
+            if (isGuest)
+              setSecondPlayer({ id: id, name: "Guest", isGuest: true });
             break;
           case "otherPlayerLeft":
             setSecondPlayer(null);

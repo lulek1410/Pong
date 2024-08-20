@@ -11,6 +11,7 @@ type IPending = Record<PendingType, boolean>;
 export interface Player {
   id: string;
   name: string;
+  isGuest: boolean
 }
 
 export interface IWebsocketContext {
@@ -31,12 +32,15 @@ export interface BaseRespMsg {
 
 export interface JoinedMsg {
   type: "joined";
-  params: { roomId: string; otherPlayer: { id: string | null } };
+  params: {
+    roomId: string;
+    otherPlayer: { id: string; isGuest: boolean } | null;
+  };
 }
 
 export interface OtherPlayerJoinedMsg {
   type: "otherPlayerJoined";
-  params: { player: { id: string | null } };
+  params: { player: { id: string; isGuest: boolean } };
 }
 
 export interface CreatedMsg {
@@ -74,6 +78,7 @@ export interface BasicMsg {
 export interface JoinParams {
   code: string;
   id: string;
+  isGuest: boolean;
 }
 
 export interface JoinMsg {
@@ -83,7 +88,7 @@ export interface JoinMsg {
 
 export interface InitMsg {
   type: "init";
-  params: { id: string };
+  params: { id: string; isGuest: boolean };
 }
 
 export type ReqMessage = JoinMsg | BasicMsg | InitMsg;
