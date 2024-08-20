@@ -63,4 +63,14 @@ export interface InitMsg {
   params: { id: string; isGuest: boolean };
 }
 
-export type ReqMessage = JoinMsg | BasicMsg | InitMsg;
+export interface UpdateMsg {
+  type: "update";
+  params: {
+    playerRect: DOMRect;
+    ballRect: DOMRect;
+    gameBoardRect: DOMRect;
+    keyPressed: string;
+  };
+}
+
+export type ReqMessage = JoinMsg | BasicMsg | InitMsg | UpdateMsg;

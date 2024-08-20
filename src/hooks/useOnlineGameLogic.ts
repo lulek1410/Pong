@@ -6,7 +6,7 @@ import { WebsocketContext } from "../context/WebSocket";
 import { GameState } from "../context/WebSocket/types";
 
 export const useOnlineGameLogic = (): GameLogic => {
-  const { gameState } = useContext(WebsocketContext);
+  const { gameState, send } = useContext(WebsocketContext);
 
   const points = { player1: 0, player2: 0 };
   const player1Offset = 0;
@@ -21,17 +21,13 @@ export const useOnlineGameLogic = (): GameLogic => {
 
   const boardHeight = gameBoardRef.current?.clientHeight || 1;
   const boardWidth = gameBoardRef.current?.clientWidth || 1;
-  // let ballVelocityX = 2;
-  // let ballVelocityY = 2;
-  // let ballPhi = 0;
-  // const maxPhi = 75;
 
-  const handleBallMovement = () => {};
-  const handlePlayerMovement = (
-    offsetModifier: number,
-    offsetLimit: number
-  ) => {
-    console.log("offsetModifier", offsetModifier, "offsetLimit", offsetLimit);
+  const getKeyPressed = (): string => {
+    if (keysPressed.current["w"]) return "w";
+    if (keysPressed.current["s"]) return "s";
+    if (keysPressed.current["ArrowUp"]) return "ArrowUp";
+    if (keysPressed.current["ArrowDown"]) return "ArrowDown";
+    return "";
   };
 
   useEffect(() => {
@@ -47,19 +43,20 @@ export const useOnlineGameLogic = (): GameLogic => {
       window.addEventListener("keydown", handleKeyDown);
       window.addEventListener("keyup", handleKeyUp);
 
-      const offsetModifier = 2.5;
-      const player1Height = player1Ref.current?.clientHeight || 1;
-      const offsetLimit =
-        50 -
-        ((player1Height / (gameBoardRef.current?.clientHeight || 1)) * 100) / 2;
-
-      const moveInterval = setInterval(() => {
-        handleBallMovement();
-        handlePlayerMovement(offsetModifier, offsetLimit);
+      const updateInterval = setInterval(() => {
+        send({
+          type: "update",
+          params: {
+            playerRect: player1Ref.current!.getBoundingClientRect(),
+            ballRect: ballRef.current!.getBoundingClientRect(),
+            gameBoardRect: gameBoardRef.current!.getBoundingClientRect(),
+            keyPressed: getKeyPressed(),
+          },
+        });
       }, 50);
 
       return () => {
-        clearInterval(moveInterval);
+        clearInterval(updateInterval);
         window.removeEventListener("keydown", handleKeyDown);
         window.removeEventListener("keyup", handleKeyUp);
       };
