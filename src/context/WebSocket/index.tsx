@@ -7,19 +7,20 @@ import {
   useState,
 } from "react";
 
+import { useMutation } from "@tanstack/react-query";
+
 import { AppState, AppStateContext, LoginStateContext, User } from "../State";
+
 import {
   RespMsg,
-  IWebsocketContext,
   ReqMessage,
-  PendingType,
-  Player,
   JoinedMsg,
   CreatedMsg,
   CountdownMsg,
   InitMsg,
 } from "./message.types";
-import { useMutation } from "@tanstack/react-query";
+import { GameState, IWebsocketContext, Player } from "./types";
+import { PendingType } from "./types";
 
 const initialPendingState: Record<PendingType, boolean> = {
   init: false,
@@ -41,6 +42,7 @@ export const WebsocketContext = createContext<IWebsocketContext>({
   send: (message: ReqMessage) => {
     throw new Error(`Function not implemented with message: ${message}`);
   },
+  gameState: GameState.PAUSED,
 });
 
 type Props = {
@@ -56,6 +58,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [countdownValue, setCountdownValue] = useState<number | null>(null);
+  const [gameState, setGameState] = useState<GameState>(GameState.PAUSED);
 
   const { id, name } = useContext(LoginStateContext);
   const { setAppState } = useContext(AppStateContext);
@@ -140,7 +143,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const handleCountdown = (msg: CountdownMsg) => {
     if (msg.params.count === 0) {
       updatePending([PendingType.COUNTDOWN], false);
-      setAppState(AppState.ONLINE);
+      setGameState(GameState.PLAYING);
       setCountdownValue(null);
     } else {
       setCountdownValue(msg.params.count);
@@ -243,6 +246,7 @@ export const WebsocketProvider = ({ children }: Props) => {
     value: val,
     error,
     countdownValue,
+    gameState,
     send,
   };
 

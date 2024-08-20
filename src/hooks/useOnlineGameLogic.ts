@@ -1,8 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+
 import { GameLogic } from "../Layout/Main/Game";
 
+import { WebsocketContext } from "../context/WebSocket";
+import { GameState } from "../context/WebSocket/types";
+
 export const useOnlineGameLogic = (): GameLogic => {
-  // const { ready, val, send } = useContext(WebsocketContext);
+  const { gameState } = useContext(WebsocketContext);
 
   const points = { player1: 0, player2: 0 };
   const player1Offset = 0;
@@ -31,34 +35,36 @@ export const useOnlineGameLogic = (): GameLogic => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      keysPressed.current[e.key] = true;
-    };
+    if (gameState === GameState.PLAYING) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        keysPressed.current[e.key] = true;
+      };
 
-    const handleKeyUp = (e: KeyboardEvent) => {
-      keysPressed.current[e.key] = false;
-    };
+      const handleKeyUp = (e: KeyboardEvent) => {
+        keysPressed.current[e.key] = false;
+      };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keyup", handleKeyUp);
 
-    const offsetModifier = 2.5;
-    const player1Height = player1Ref.current?.clientHeight || 1;
-    const offsetLimit =
-      50 -
-      ((player1Height / (gameBoardRef.current?.clientHeight || 1)) * 100) / 2;
+      const offsetModifier = 2.5;
+      const player1Height = player1Ref.current?.clientHeight || 1;
+      const offsetLimit =
+        50 -
+        ((player1Height / (gameBoardRef.current?.clientHeight || 1)) * 100) / 2;
 
-    const moveInterval = setInterval(() => {
-      handleBallMovement();
-      handlePlayerMovement(offsetModifier, offsetLimit);
-    }, 50);
+      const moveInterval = setInterval(() => {
+        handleBallMovement();
+        handlePlayerMovement(offsetModifier, offsetLimit);
+      }, 50);
 
-    return () => {
-      clearInterval(moveInterval);
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
+      return () => {
+        clearInterval(moveInterval);
+        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener("keyup", handleKeyUp);
+      };
+    }
+  }, [gameState]);
 
   const calculateOffsetInPx = (offset: number, direction: "x" | "y") => {
     return `${

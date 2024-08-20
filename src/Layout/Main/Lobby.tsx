@@ -11,7 +11,6 @@ import {
 import { WebsocketContext } from "../../context/WebSocket";
 
 import "./Lobby.css";
-import Loader from "../../components/Loader";
 
 const Lobby = () => {
   const { name } = useContext(LoginStateContext);
