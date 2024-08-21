@@ -18,6 +18,7 @@ import {
   CreatedMsg,
   CountdownMsg,
   InitMsg,
+  UpdateMsg,
 } from "./message.types";
 import { GameState, IWebsocketContext, Player } from "./types";
 import { PendingType } from "./types";
@@ -35,7 +36,7 @@ export const WebsocketContext = createContext<IWebsocketContext>({
   pending: initialPendingState,
   secondPlayer: null,
   roomId: null,
-  value: null,
+  update: null,
   error: null,
   isHost: false,
   countdownValue: null,
@@ -53,7 +54,7 @@ export const WebsocketProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const [pending, setPending] = useState(initialPendingState);
   const [isHost, setIsHost] = useState(false);
-  const [val, setVal] = useState<RespMsg | null>(null);
+  const [update, setUpdate] = useState<UpdateMsg | null>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [secondPlayer, setSecondPlayer] = useState<Player | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -124,7 +125,6 @@ export const WebsocketProvider = ({ children }: Props) => {
   const handleLeave = () => {
     setPending(initialPendingState);
     setIsHost(false);
-    setVal(null);
     setRoomId(null);
     setSecondPlayer(null);
     setError(null);
@@ -165,7 +165,6 @@ export const WebsocketProvider = ({ children }: Props) => {
 
       socket.onmessage = (event: MessageEvent<RespMsg>) => {
         const msg: RespMsg = JSON.parse(event.data.toString());
-        setVal(msg);
         console.log(msg);
         switch (msg.type) {
           case "initialized":
@@ -196,6 +195,9 @@ export const WebsocketProvider = ({ children }: Props) => {
             break;
           case "gameStarting":
             handleGameStarting();
+            break;
+          case "update":
+            setUpdate(msg);
             break;
         }
       };
@@ -243,7 +245,7 @@ export const WebsocketProvider = ({ children }: Props) => {
     isHost,
     secondPlayer,
     roomId,
-    value: val,
+    update,
     error,
     countdownValue,
     gameState,

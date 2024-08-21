@@ -35,13 +35,24 @@ export interface CountdownMsg {
   params: { count: number };
 }
 
+export interface UpdateMsg {
+  type: "update";
+  params: {
+    points: { player1: number; player2: number };
+    player1Offset: number;
+    player2Offset: number;
+    ballOffset: { x: number; y: number };
+  };
+}
+
 export type RespMsg =
   | JoinedMsg
   | ErrorMsg
   | CreatedMsg
   | OtherPlayerJoinedMsg
   | BaseRespMsg
-  | CountdownMsg;
+  | CountdownMsg
+  | UpdateMsg;
 
 export interface BasicMsg {
   type: "leave" | "search" | "create" | "startGame";
@@ -63,14 +74,26 @@ export interface InitMsg {
   params: { id: string; isGuest: boolean };
 }
 
-export interface UpdateMsg {
-  type: "update";
+export interface KeyPressMsg {
+  type: "keyPress";
   params: {
-    playerRect: DOMRect;
-    ballRect: DOMRect;
-    gameBoardRect: DOMRect;
     keyPressed: string;
   };
 }
 
-export type ReqMessage = JoinMsg | BasicMsg | InitMsg | UpdateMsg;
+export interface InitOnlineGame {
+  type: "initOnlineGame";
+  params: {
+    player1Rect: DOMRect;
+    player2Rect: DOMRect;
+    ballRect: DOMRect;
+    gameBoardRect: DOMRect;
+  };
+}
+
+export type ReqMessage =
+  | JoinMsg
+  | BasicMsg
+  | InitMsg
+  | KeyPressMsg
+  | InitOnlineGame;

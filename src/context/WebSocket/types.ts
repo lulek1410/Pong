@@ -1,4 +1,4 @@
-import { RespMsg, ReqMessage } from "./message.types";
+import { ReqMessage, UpdateMsg } from "./message.types";
 
 export enum PendingType {
   INIT = "init",
@@ -22,7 +22,7 @@ export interface IWebsocketContext {
   gameState: GameState;
   secondPlayer: Player | null;
   roomId: string | null;
-  value: RespMsg | null;
+  update: UpdateMsg | null;
   error: string | null;
   countdownValue: number | null;
   isHost: boolean;

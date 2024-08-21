@@ -1,17 +1,17 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { GameLogic } from "../Layout/Main/Game";
+import { BallOffset, GameLogic, Points } from "../Layout/Main/Game";
 
 import { WebsocketContext } from "../context/WebSocket";
 import { GameState } from "../context/WebSocket/types";
 
 export const useOnlineGameLogic = (): GameLogic => {
-  const { gameState, send } = useContext(WebsocketContext);
+  const { gameState, send, isHost, update } = useContext(WebsocketContext);
 
-  const points = { player1: 0, player2: 0 };
-  const player1Offset = 0;
-  const player2Offset = 0;
-  const ballOffset = { x: 0, y: 0 };
+  const [points, setPoints] = useState<Points>({ player1: 0, player2: 0 });
+  const [player1Offset, setPlayer1Offset] = useState(0);
+  const [player2Offset, setPlayer2Offset] = useState(0);
+  const [ballOffset, setBallOffset] = useState<BallOffset>({ x: 0, y: 0 });
 
   const player1Ref = useRef<HTMLDivElement>(null);
   const player2Ref = useRef<HTMLDivElement>(null);
@@ -31,6 +31,29 @@ export const useOnlineGameLogic = (): GameLogic => {
   };
 
   useEffect(() => {
+    if (isHost) {
+      send({
+        type: "initOnlineGame",
+        params: {
+          player1Rect: player1Ref.current!.getBoundingClientRect(),
+          player2Rect: player2Ref.current!.getBoundingClientRect(),
+          ballRect: ballRef.current!.getBoundingClientRect(),
+          gameBoardRect: gameBoardRef.current!.getBoundingClientRect(),
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (update) {
+      // setPoints(update.params.points);
+      // setPlayer1Offset(update.params.player1Offset);
+      // setPlayer2Offset(update.params.player2Offset);
+      // setBallOffset(update.params.ballOffset);
+    }
+  }, [update]);
+
+  useEffect(() => {
     if (gameState === GameState.PLAYING) {
       const handleKeyDown = (e: KeyboardEvent) => {
         keysPressed.current[e.key] = true;
@@ -45,15 +68,12 @@ export const useOnlineGameLogic = (): GameLogic => {
 
       const updateInterval = setInterval(() => {
         send({
-          type: "update",
+          type: "keyPress",
           params: {
-            playerRect: player1Ref.current!.getBoundingClientRect(),
-            ballRect: ballRef.current!.getBoundingClientRect(),
-            gameBoardRect: gameBoardRef.current!.getBoundingClientRect(),
             keyPressed: getKeyPressed(),
           },
         });
-      }, 50);
+      }, 700);
 
       return () => {
         clearInterval(updateInterval);
