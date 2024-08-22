@@ -46,10 +46,10 @@ export const useOnlineGameLogic = (): GameLogic => {
 
   useEffect(() => {
     if (update) {
-      // setPoints(update.params.points);
-      // setPlayer1Offset(update.params.player1Offset);
-      // setPlayer2Offset(update.params.player2Offset);
-      // setBallOffset(update.params.ballOffset);
+      setPoints(update.params.points);
+      setPlayer1Offset(update.params.player1Offset);
+      setPlayer2Offset(update.params.player2Offset);
+      setBallOffset(update.params.ballOffset);
     }
   }, [update]);
 
